@@ -35,6 +35,7 @@ const App = () => {
   const [submit, setSubmit] = useState(false);
   const [flavors, setFlavors] = useState([]);
   const options = ['Salty', 'Spicy', 'Sweet', 'Greasy', 'Sour'];
+  const [detail, setDetail] = useState(false);
 
   function pickFlavor(selectedFlavor) {
     if (flavors.includes(selectedFlavor)) {
@@ -148,7 +149,7 @@ const App = () => {
                 </Text>
                 <View style={styles.button}>
                   <TouchableOpacity
-                    onPress={() => {}}
+                    onPress={() => setDetail(!detail)}
                     style={[
                       styles.signIn,
                       {
@@ -171,6 +172,78 @@ const App = () => {
             </View>
           ))}
         </ScrollView>
+      ) : null}
+
+      {detail ? (
+        <View style={styles.container}>
+          <View style={{backgroundColor: 'white', flex: 1, alignItems: 'flex-start'}}>
+            
+          </View>
+          <View style={{backgroundColor: 'white', flex: 1, justifyContent: 'flex-start', alignItems: 'flex-start', padding: 10}}>
+            <TouchableOpacity
+              onPress={() => setDetail(!detail)}
+            >
+              <Text
+                style={[
+                  styles.textSign,
+                  {
+                    color: 'green',
+                  },
+                ]}>
+                X
+              </Text>
+            </TouchableOpacity>
+          </View>
+          <View style={{backgroundColor: 'white', flex: 18, justifyContent: 'flex-start', alignItems: 'center', padding: 10}}>
+            <Text
+              style={[
+                styles.textDetail,
+                {
+                  fontWeight: 'bold',
+                },
+              ]}>
+              Restaurant
+            </Text>
+            <Text style={styles.textDetail}>
+              Rating from country:
+            </Text>
+            <Text style={styles.textDetail}>
+              Average rating:
+            </Text>
+            <Text style={styles.textDetail}>
+              Taste:
+            </Text>
+            <Text style={styles.textDetail}>
+              Opens:
+            </Text>
+            <Text style={styles.textDetail}>
+              Price:
+            </Text>
+            <Text style={styles.textDetail}>
+              Phone:
+            </Text>
+            <TouchableOpacity
+              onPress={() => {}}
+              style={[
+                styles.signIn,
+                {
+                  borderColor: 'green',
+                  borderWidth: 1,
+                },
+              ]}
+            >
+              <Text
+                style={[
+                  styles.textSign,
+                  {
+                    color: 'green',
+                  },
+                ]}>
+                Save
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </View>
       ) : null}
     </View>
   );
@@ -301,5 +374,8 @@ const styles = StyleSheet.create({
   },
   check: {
     alignSelf: 'center',
+  },
+  textDetail: {
+    color: 'black',
   },
 });
