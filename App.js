@@ -37,6 +37,7 @@ const App = () => {
   const options = ['Salty', 'Spicy', 'Sweet', 'Greasy', 'Sour'];
   const [detail, setDetail] = useState(false);
   const [cardID, setCardID] = useState(0);
+  const [register, setRegister] = useState(true);
 
   function pickFlavor(selectedFlavor) {
     if (flavors.includes(selectedFlavor)) {
@@ -68,6 +69,117 @@ const App = () => {
           <Ionicons name="ios-search" size={20} />
         </TouchableOpacity>
       </View>
+
+      {register ? (
+        <View style={styles.container}>
+          <View style={{backgroundColor: 'white', flex: 1, alignItems: 'flex-start'}}>
+            
+          </View>
+
+          <View style={{backgroundColor: 'white', flex: 19, justifyContent: 'flex-start', alignItems: 'flex-start', padding: 10}}>
+            <View style={{flexDirection: 'row', margin: 10,}}>
+              <Text style={{fontWeight: 'bold', fontSize: 15}}>
+                Register
+              </Text>
+            </View>
+
+            <View style={{flexDirection: 'row', margin: 10,}}>
+              <Text>Username: </Text>
+              <TextInput
+                placeholder=""
+                placeholderTextColor="#000"
+                autoCapitalize="none"
+                style={{
+                  flex: 1,
+                  padding: 0,
+                  marginLeft: 5,
+                  borderBottomColor: '#000',
+                  borderBottomWidth: 1,
+                }}
+              />
+            </View>
+
+            <View style={{flexDirection: 'row', margin: 10,}}>
+              <Text>Passward: </Text>
+              <TextInput
+                placeholder=""
+                placeholderTextColor="#000"
+                autoCapitalize="none"
+                style={{
+                  flex: 1,
+                  padding: 0,
+                  marginLeft: 5,
+                  borderBottomColor: '#000',
+                  borderBottomWidth: 1,
+                }}
+              />
+            </View>
+
+            <View
+              style={{
+                flexDirection: 'row',
+                margin: 10,
+              }}
+            >
+              <Text>Country: </Text>
+              <TextInput
+                placeholder=""
+                placeholderTextColor="#000"
+                autoCapitalize="none"
+                style={{
+                  flex: 1,
+                  padding: 0,
+                  marginLeft: 5,
+                  borderBottomColor: '#000',
+                  borderBottomWidth: 1,
+                }}
+              />
+              <Ionicons name="ios-search" size={20} />
+            </View>
+
+            <View style={{flexDirection: 'row', margin: 10,}}>
+              <Text>Taste preference: </Text>
+            </View>
+
+            <View style={{flexDirection: 'column', margin: 10,}}>
+              {options.map((option, index) => (
+                <View key={index} style={styles.flavor}>
+                  <TouchableOpacity
+                    style={styles.checkbox}
+                    onPress={() => pickFlavor(option)}>
+                    {flavors.includes(option) && (
+                      <Text style={styles.check}>𐄂</Text>
+                    )}
+                  </TouchableOpacity>
+                  <Text>{option}</Text>
+                </View>
+              ))}
+            </View>
+
+            <TouchableOpacity
+              onPress={() => setRegister(!register)}
+              style={[
+                styles.signIn,
+                {
+                  borderColor: 'green',
+                  borderWidth: 1,
+                },
+              ]}
+            >
+              <Text
+                style={[
+                  styles.textSign,
+                  {
+                    color: 'green',
+                  },
+                ]}>
+                Sign up
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      ) : null}
+
       {filter ? (
         <View style={styles.formContainer}>
           <View style={styles.textContent}>
