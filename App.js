@@ -36,6 +36,7 @@ const App = () => {
   const [flavors, setFlavors] = useState([]);
   const options = ['Salty', 'Spicy', 'Sweet', 'Greasy', 'Sour'];
   const [detail, setDetail] = useState(false);
+  const [cardID, setCardID] = useState(0);
 
   function pickFlavor(selectedFlavor) {
     if (flavors.includes(selectedFlavor)) {
@@ -149,7 +150,7 @@ const App = () => {
                 </Text>
                 <View style={styles.button}>
                   <TouchableOpacity
-                    onPress={() => setDetail(!detail)}
+                    onPress={() => {setCardID(index); setDetail(!detail); }}
                     style={[
                       styles.signIn,
                       {
@@ -195,6 +196,11 @@ const App = () => {
             </TouchableOpacity>
           </View>
           <View style={{backgroundColor: 'white', flex: 18, justifyContent: 'flex-start', alignItems: 'center', padding: 10}}>
+            <Image
+              source={markers[cardID].image}
+              style={styles.detailImage}
+              resizeMode="cover"
+            />
             <Text
               style={[
                 styles.textDetail,
@@ -202,25 +208,25 @@ const App = () => {
                   fontWeight: 'bold',
                 },
               ]}>
-              Restaurant
+              {markers[cardID].title}
             </Text>
             <Text style={styles.textDetail}>
-              Rating from country:
+              Rating from country: 4.7
             </Text>
             <Text style={styles.textDetail}>
-              Average rating:
+              Average rating: {markers[cardID].rating}
             </Text>
             <Text style={styles.textDetail}>
-              Taste:
+              Taste: Spicy
             </Text>
             <Text style={styles.textDetail}>
-              Opens:
+              Opens: Mon-Fri 11:00am-9:00pm
             </Text>
             <Text style={styles.textDetail}>
-              Price:
+              Price: $20-$30
             </Text>
             <Text style={styles.textDetail}>
-              Phone:
+              Phone: (560) 140-8610
             </Text>
             <TouchableOpacity
               onPress={() => {}}
@@ -377,5 +383,14 @@ const styles = StyleSheet.create({
   },
   textDetail: {
     color: 'black',
+  },
+  detailImage: {
+    flex: 0.6,
+    aspectRatio: 1,
+    // width: 2,
+    // height: ,
+    // alignSelf: 'stretch',
+    // resizeMode: 'contain',
+    // alignSelf: 'center',
   },
 });
