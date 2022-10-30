@@ -35,6 +35,9 @@ const App = () => {
   const [submit, setSubmit] = useState(false);
   const [flavors, setFlavors] = useState([]);
   const options = ['Salty', 'Spicy', 'Sweet', 'Greasy', 'Sour'];
+  const [detail, setDetail] = useState(false);
+  const [cardID, setCardID] = useState(0);
+  const [register, setRegister] = useState(true);
 
   function pickFlavor(selectedFlavor) {
     if (flavors.includes(selectedFlavor)) {
@@ -66,6 +69,117 @@ const App = () => {
           <Ionicons name="ios-search" size={20} />
         </TouchableOpacity>
       </View>
+
+      {register ? (
+        <View style={styles.container}>
+          <View style={{backgroundColor: 'white', flex: 1, alignItems: 'flex-start'}}>
+            
+          </View>
+
+          <View style={{backgroundColor: 'white', flex: 19, justifyContent: 'flex-start', alignItems: 'flex-start', padding: 10}}>
+            <View style={{flexDirection: 'row', margin: 10,}}>
+              <Text style={{fontWeight: 'bold', fontSize: 15}}>
+                Register
+              </Text>
+            </View>
+
+            <View style={{flexDirection: 'row', margin: 10,}}>
+              <Text>Username: </Text>
+              <TextInput
+                placeholder=""
+                placeholderTextColor="#000"
+                autoCapitalize="none"
+                style={{
+                  flex: 1,
+                  padding: 0,
+                  marginLeft: 5,
+                  borderBottomColor: '#000',
+                  borderBottomWidth: 1,
+                }}
+              />
+            </View>
+
+            <View style={{flexDirection: 'row', margin: 10,}}>
+              <Text>Passward: </Text>
+              <TextInput
+                placeholder=""
+                placeholderTextColor="#000"
+                autoCapitalize="none"
+                style={{
+                  flex: 1,
+                  padding: 0,
+                  marginLeft: 5,
+                  borderBottomColor: '#000',
+                  borderBottomWidth: 1,
+                }}
+              />
+            </View>
+
+            <View
+              style={{
+                flexDirection: 'row',
+                margin: 10,
+              }}
+            >
+              <Text>Country: </Text>
+              <TextInput
+                placeholder=""
+                placeholderTextColor="#000"
+                autoCapitalize="none"
+                style={{
+                  flex: 1,
+                  padding: 0,
+                  marginLeft: 5,
+                  borderBottomColor: '#000',
+                  borderBottomWidth: 1,
+                }}
+              />
+              <Ionicons name="ios-search" size={20} />
+            </View>
+
+            <View style={{flexDirection: 'row', margin: 10,}}>
+              <Text>Taste preference: </Text>
+            </View>
+
+            <View style={{flexDirection: 'column', margin: 10,}}>
+              {options.map((option, index) => (
+                <View key={index} style={styles.flavor}>
+                  <TouchableOpacity
+                    style={styles.checkbox}
+                    onPress={() => pickFlavor(option)}>
+                    {flavors.includes(option) && (
+                      <Text style={styles.check}>𐄂</Text>
+                    )}
+                  </TouchableOpacity>
+                  <Text>{option}</Text>
+                </View>
+              ))}
+            </View>
+
+            <TouchableOpacity
+              onPress={() => setRegister(!register)}
+              style={[
+                styles.signIn,
+                {
+                  borderColor: 'green',
+                  borderWidth: 1,
+                },
+              ]}
+            >
+              <Text
+                style={[
+                  styles.textSign,
+                  {
+                    color: 'green',
+                  },
+                ]}>
+                Sign up
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      ) : null}
+
       {filter ? (
         <View style={styles.formContainer}>
           <View style={styles.textContent}>
@@ -148,7 +262,7 @@ const App = () => {
                 </Text>
                 <View style={styles.button}>
                   <TouchableOpacity
-                    onPress={() => {}}
+                    onPress={() => {setCardID(index); setDetail(!detail); }}
                     style={[
                       styles.signIn,
                       {
@@ -171,6 +285,83 @@ const App = () => {
             </View>
           ))}
         </ScrollView>
+      ) : null}
+
+      {detail ? (
+        <View style={styles.container}>
+          <View style={{backgroundColor: 'white', flex: 1, alignItems: 'flex-start'}}>
+            
+          </View>
+          <View style={{backgroundColor: 'white', flex: 1, justifyContent: 'flex-start', alignItems: 'flex-start', padding: 10}}>
+            <TouchableOpacity
+              onPress={() => setDetail(!detail)}
+            >
+              <Text
+                style={[
+                  styles.textSign,
+                  {
+                    color: 'green',
+                  },
+                ]}>
+                X
+              </Text>
+            </TouchableOpacity>
+          </View>
+          <View style={{backgroundColor: 'white', flex: 18, justifyContent: 'flex-start', alignItems: 'center', padding: 10}}>
+            <Image
+              source={markers[cardID].image}
+              style={styles.detailImage}
+              resizeMode="cover"
+            />
+            <Text
+              style={[
+                styles.textDetail,
+                {
+                  fontWeight: 'bold',
+                },
+              ]}>
+              {markers[cardID].title}
+            </Text>
+            <Text style={styles.textDetail}>
+              Rating from country: 4.7
+            </Text>
+            <Text style={styles.textDetail}>
+              Average rating: {markers[cardID].rating}
+            </Text>
+            <Text style={styles.textDetail}>
+              Taste: Spicy
+            </Text>
+            <Text style={styles.textDetail}>
+              Opens: Mon-Fri 11:00am-9:00pm
+            </Text>
+            <Text style={styles.textDetail}>
+              Price: $20-$30
+            </Text>
+            <Text style={styles.textDetail}>
+              Phone: (560) 140-8610
+            </Text>
+            <TouchableOpacity
+              onPress={() => {}}
+              style={[
+                styles.signIn,
+                {
+                  borderColor: 'green',
+                  borderWidth: 1,
+                },
+              ]}
+            >
+              <Text
+                style={[
+                  styles.textSign,
+                  {
+                    color: 'green',
+                  },
+                ]}>
+                Save
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </View>
       ) : null}
     </View>
   );
@@ -301,5 +492,17 @@ const styles = StyleSheet.create({
   },
   check: {
     alignSelf: 'center',
+  },
+  textDetail: {
+    color: 'black',
+  },
+  detailImage: {
+    flex: 0.6,
+    aspectRatio: 1,
+    // width: 2,
+    // height: ,
+    // alignSelf: 'stretch',
+    // resizeMode: 'contain',
+    // alignSelf: 'center',
   },
 });
