@@ -5,7 +5,7 @@ const Images = [
   {image: require('../assets/banners/food-banner4.jpg')},
 ];
 
-export const markers = [
+export const initMarkers = [
   {
     coordinate: {
       latitude: 22.6293867,

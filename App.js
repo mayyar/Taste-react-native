@@ -17,9 +17,9 @@ import {
   Image,
   TouchableOpacity,
 } from 'react-native';
-import MapView, {PROVIDER_GOOGLE} from 'react-native-maps';
+import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import {markers} from './model/mapData';
+import { getPlaces } from './api/MapAPI'
 
 const {width, height} = Dimensions.get('window');
 const CARD_HEIGHT = 220;
@@ -27,10 +27,12 @@ const CARD_WIDTH = width * 0.8;
 const SPACING_FOR_CARD_INSET = width * 0.1 - 10;
 
 const App = () => {
-  const initialMapState = {
-    markers,
+  const initMapState = {
+    lat: 33.7767,
+    long: -84.3923,
+    places: [],
   };
-  const [state, setState] = useState(initialMapState);
+  const [mapState, setMapState] = useState(initMapState);
   const [filter, setFilter] = useState(false);
   const [submit, setSubmit] = useState(false);
   const [flavors, setFlavors] = useState([]);
@@ -38,6 +40,15 @@ const App = () => {
   const [detail, setDetail] = useState(false);
   const [cardID, setCardID] = useState(0);
   const [register, setRegister] = useState(true);
+
+  function getFilterResults() {
+    Promise.all([getPlaces()])
+      .then(
+        responses => {
+          setMapState(responses[0]);
+        }
+      );
+  }
 
   function pickFlavor(selectedFlavor) {
     if (flavors.includes(selectedFlavor)) {
@@ -53,11 +64,20 @@ const App = () => {
         provider={PROVIDER_GOOGLE} // remove if not using Google Maps
         style={styles.map}
         region={{
-          latitude: 33.7767,
-          longitude: -84.3923,
+          latitude: mapState.lat,
+          longitude: mapState.long,
           latitudeDelta: 0.015,
           longitudeDelta: 0.0121,
-        }}></MapView>
+        }}>
+        {mapState.places.map((marker, index) => (
+          <Marker
+            key={index}
+            coordinate={marker.latlng}
+            title={marker.name}
+            description={"Avg rating: " + marker.rating}
+          />
+        ))}
+        </MapView>
       <View style={styles.searchBox}>
         <TextInput
           placeholder="Search here"
@@ -73,7 +93,7 @@ const App = () => {
       {register ? (
         <View style={styles.container}>
           <View style={{backgroundColor: 'white', flex: 1, alignItems: 'flex-start'}}>
-            
+
           </View>
 
           <View style={{backgroundColor: 'white', flex: 19, justifyContent: 'flex-start', alignItems: 'flex-start', padding: 10}}>
@@ -227,12 +247,18 @@ const App = () => {
             <View style={styles.formButton}>
               <TouchableOpacity
                 style={styles.filterButton}
-                onPress={() => setSubmit(!submit)}>
+                onPress={() => {
+                  getFilterResults();
+                  setSubmit(!submit);
+                }}>
                 <Text style={styles.textFilter}>Skip</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 style={styles.filterButton}
-                onPress={() => setSubmit(!submit)}>
+                onPress={() => {
+                  getFilterResults();
+                  setSubmit(!submit);
+                }}>
                 <Text style={styles.textFilter}>Submit</Text>
               </TouchableOpacity>
             </View>
@@ -246,19 +272,19 @@ const App = () => {
           scrollEventThrottle={1}
           showsHorizontalScrollIndicator={false}
           style={styles.scrollView}>
-          {state.markers.map((marker, index) => (
+          {mapState.places.map((marker, index) => (
             <View style={styles.card} key={index}>
               <Image
-                source={marker.image}
+                source={{uri: marker.photoUrl}}
                 style={styles.cardImage}
                 resizeMode="cover"
               />
               <View style={styles.textContent}>
                 <Text numberOfLines={1} style={styles.cardTitle}>
-                  {marker.title}
+                  {marker.name}
                 </Text>
                 <Text numberOfLines={1} style={styles.cardDescription}>
-                  {marker.description}
+                  {"Avg rating: " + marker.rating}
                 </Text>
                 <View style={styles.button}>
                   <TouchableOpacity
@@ -290,7 +316,7 @@ const App = () => {
       {detail ? (
         <View style={styles.container}>
           <View style={{backgroundColor: 'white', flex: 1, alignItems: 'flex-start'}}>
-            
+
           </View>
           <View style={{backgroundColor: 'white', flex: 1, justifyContent: 'flex-start', alignItems: 'flex-start', padding: 10}}>
             <TouchableOpacity
@@ -309,7 +335,7 @@ const App = () => {
           </View>
           <View style={{backgroundColor: 'white', flex: 18, justifyContent: 'flex-start', alignItems: 'center', padding: 10}}>
             <Image
-              source={markers[cardID].image}
+              source={{uri: mapState.places[cardID].photoUrl}}
               style={styles.detailImage}
               resizeMode="cover"
             />
@@ -320,13 +346,13 @@ const App = () => {
                   fontWeight: 'bold',
                 },
               ]}>
-              {markers[cardID].title}
+              {mapState.places[cardID].name}
             </Text>
             <Text style={styles.textDetail}>
               Rating from country: 4.7
             </Text>
             <Text style={styles.textDetail}>
-              Average rating: {markers[cardID].rating}
+              Average rating: {mapState.places[cardID].rating}
             </Text>
             <Text style={styles.textDetail}>
               Taste: Spicy
