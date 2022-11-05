@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect } from 'react';
 import {
   View,
   StyleSheet,
@@ -14,6 +14,8 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import {getPlaces} from '../api/MapAPI';
 import StarRating from './StarRating';
 import ReviewPage from './ReviewPage';
+import SearchableDropdown from 'react-native-searchable-dropdown';
+import { items } from './DropdownItems';
 
 const {width, height} = Dimensions.get('window');
 const CARD_HEIGHT = 220;
@@ -34,6 +36,7 @@ const HomeScreen = ({route, navigation}) => {
   const [cardID, setCardID] = useState(0);
   const [register, setRegister] = useState(true);
   const [reviewPage, setReviewPage] = useState(false);
+  const [countries, setCountries] = useState([]);
 
   function getFilterResults() {
     Promise.all([getPlaces()]).then(responses => {
@@ -82,28 +85,25 @@ const HomeScreen = ({route, navigation}) => {
       </View>
 
       {register ? (
-        <View style={styles.container}>
-          <View
-            style={{
-              backgroundColor: 'white',
-              flex: 1,
-              alignItems: 'flex-start',
-            }}></View>
+        // <SafeAreaView style={styles.container}>
+        <ScrollView style={styles.container}>
+          <View style={{backgroundColor: 'white', flex: 1, alignItems: 'flex-start'}}>
+            
+          </View>
 
-          <View
-            style={{
-              backgroundColor: 'white',
-              flex: 19,
-              justifyContent: 'flex-start',
-              alignItems: 'flex-start',
-              padding: 10,
-            }}>
-            <View style={{flexDirection: 'row', margin: 10}}>
-              <Text style={{fontWeight: 'bold', fontSize: 15}}>Register</Text>
+          <View style={{backgroundColor: 'white', flex: 19, justifyContent: 'flex-start', alignItems: 'flex-start', padding: 10}}>
+            <View style={{flexDirection: 'row', margin: 10,}}>
+              <Text style={{fontWeight: 'bold', fontSize: 15}}>
+                Register
+              </Text>
             </View>
 
-            <View style={{flexDirection: 'row', margin: 10}}>
-              <Text>Username: </Text>
+            <View style={{flexDirection: 'row', margin: 10,}}>
+              <Text>* Required</Text>
+            </View>
+
+            <View style={{flexDirection: 'row', margin: 10,}}>
+              <Text>Username * </Text>
               <TextInput
                 placeholder=""
                 placeholderTextColor="#000"
@@ -118,8 +118,8 @@ const HomeScreen = ({route, navigation}) => {
               />
             </View>
 
-            <View style={{flexDirection: 'row', margin: 10}}>
-              <Text>Passward: </Text>
+            <View style={{flexDirection: 'row', margin: 10,}}>
+              <Text>Passward * </Text>
               <TextInput
                 placeholder=""
                 placeholderTextColor="#000"
@@ -134,12 +134,89 @@ const HomeScreen = ({route, navigation}) => {
               />
             </View>
 
-            <View
+            <View style={{flexDirection: 'row', margin: 10,}}>
+              <Text>Re-enter Passward * </Text>
+              <TextInput
+                placeholder=""
+                placeholderTextColor="#000"
+                autoCapitalize="none"
+                style={{
+                  flex: 1,
+                  padding: 0,
+                  marginLeft: 5,
+                  borderBottomColor: '#000',
+                  borderBottomWidth: 1,
+                }}
+              />
+            </View>
+
+            <View style={{flexDirection: 'row', margin: 10,}}>
+              <Text>In order to make your ratings more meaningful, we invite you to provide the following information:</Text>
+            </View>
+
+            <View style={{flexDirection: 'row', margin: 10,}}>
+              <Text>Country * </Text>
+            </View>
+
+
+            <View style={{flexDirection: 'row', margin: 10, height:200}}>
+                <SearchableDropdown
+                    multi={true}
+                    selectedItems={countries}
+                    onTextChange={(text) => { }}
+                    onItemSelect={(item) => { 
+                        if (countries.length < 3)
+                            setCountries(prevArray => [...prevArray, item]);
+                    }}
+                    onRemoveItem={(item, clickedIndex) => {
+                        setCountries(countries => countries.filter((_, index) => index !== clickedIndex));
+                    }}
+                    containerStyle={{ 
+                        padding: 0, width: '100%', maxHeight: 200
+                    }}
+                    textInputStyle={{
+                        padding: 12,
+                        borderWidth: 1,
+                        borderColor: '#ccc',
+                        backgroundColor: '#FAF7F6',
+                    }}
+                    itemStyle={{
+                        padding: 10,
+                        marginTop: 2,
+                        backgroundColor: '#FAF9F8',
+                        borderColor: '#bbb',
+                        borderWidth: 1,
+                        borderRadius: 0,
+                    }}
+                    itemTextStyle={{
+                        color: '#222',
+                    }}
+                    itemsContainerStyle={{
+                        maxHeight: '60%',
+                    }}
+                    items={items}
+                    defaultIndex={0}
+                    chip={true}
+                    placeholder="type in to search"
+                    resetValue={false}
+                    listProps={{
+                        nestedScrollEnabled: false,
+                        
+                        // ListEmptyComponent: 'aaa',
+                        initialNumToRender: 3,
+                        // horizontal: true,
+                    }}
+                    underlineColorAndroid="transparent"
+                />
+            </View>
+
+            {/* <View
               style={{
                 flexDirection: 'row',
                 margin: 10,
-              }}>
-              <Text>Country: </Text>
+              }}
+            >
+              <Text>Country * </Text>
               <TextInput
                 placeholder=""
                 placeholderTextColor="#000"
@@ -153,10 +230,10 @@ const HomeScreen = ({route, navigation}) => {
                 }}
               />
               <Ionicons name="ios-search" size={20} />
-            </View>
+            </View> */}
 
-            <View style={{flexDirection: 'row', margin: 10}}>
-              <Text>Taste preference: </Text>
+            <View style={{flexDirection: 'row', margin: 10,}}>
+              <Text>Taste preference * </Text>
             </View>
 
             <View style={{flexDirection: 'column', margin: 10}}>
@@ -194,7 +271,8 @@ const HomeScreen = ({route, navigation}) => {
               </Text>
             </TouchableOpacity>
           </View>
-        </View>
+          </ScrollView>
+        // </SafeAreaView> 
       ) : null}
 
       {filter ? (
