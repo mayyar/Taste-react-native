@@ -35,6 +35,7 @@ const HomeScreen = ({route, navigation}) => {
   const [detail, setDetail] = useState(false);
   const [cardID, setCardID] = useState(0);
   const [register, setRegister] = useState(true);
+  const [background, setBackground] = useState(false);
   const [reviewPage, setReviewPage] = useState(false);
   const [countries, setCountries] = useState([]);
 
@@ -86,12 +87,8 @@ const HomeScreen = ({route, navigation}) => {
 
       {register ? (
         // <SafeAreaView style={styles.container}>
-        <ScrollView style={styles.container}>
-          <View style={{backgroundColor: 'white', flex: 1, alignItems: 'flex-start'}}>
-            
-          </View>
-
-          <View style={{backgroundColor: 'white', flex: 19, justifyContent: 'flex-start', alignItems: 'flex-start', padding: 10}}>
+        <View style={[styles.container, {backgroundColor: 'white', flex: 19, justifyContent: 'flex-start', alignItems: 'flex-start', padding: 10}]}>
+          {/* <View style={{backgroundColor: 'white', flex: 19, justifyContent: 'flex-start', alignItems: 'flex-start', padding: 10}}> */}
             <View style={{flexDirection: 'row', margin: 10,}}>
               <Text style={{fontWeight: 'bold', fontSize: 15}}>
                 Register
@@ -150,16 +147,55 @@ const HomeScreen = ({route, navigation}) => {
               />
             </View>
 
+            <TouchableOpacity
+              onPress={() => {
+                setRegister(!register); 
+                setBackground(!background);
+            }}
+              style={[
+                styles.signIn,
+                {
+                  borderColor: 'green',
+                  borderWidth: 1,
+                },
+              ]}>
+              <Text
+                style={[
+                  styles.textSign,
+                  {
+                    color: 'green',
+                  },
+                ]}>
+                Sign up
+              </Text>
+            </TouchableOpacity>
+          </View>
+        //   </View>
+      ) : null}
+
+      {background ? (
+        <View style={[styles.container, {backgroundColor: 'white', flex: 19, justifyContent: 'flex-start', alignItems: 'flex-start', padding: 10}]}>  
+            {/* <View style={{backgroundColor: 'white', flex: 19, justifyContent: 'flex-start', alignItems: 'flex-start', padding: 10}}> */}
             <View style={{flexDirection: 'row', margin: 10,}}>
-              <Text>In order to make your ratings more meaningful, we invite you to provide the following information:</Text>
+              <Text style={{fontWeight: 'bold', fontSize: 15}}>
+                Background
+              </Text>
             </View>
 
             <View style={{flexDirection: 'row', margin: 10,}}>
-              <Text>Country * </Text>
+              <Text>* Required</Text>
+            </View>
+
+            <View style={{flexDirection: 'row', margin: 10,}}>
+                <Text>In order to make your ratings more meaningful, we invite you to provide the following information:</Text>
+            </View>
+
+            <View style={{flexDirection: 'row', margin: 10,}}>
+                <Text>Country *{"\n"}</Text>
             </View>
 
 
-            <View style={{flexDirection: 'row', margin: 10, height:200}}>
+            <View style={{flexDirection: 'row', margin: 10, height:250}}>
                 <SearchableDropdown
                     multi={true}
                     selectedItems={countries}
@@ -172,7 +208,7 @@ const HomeScreen = ({route, navigation}) => {
                         setCountries(countries => countries.filter((_, index) => index !== clickedIndex));
                     }}
                     containerStyle={{ 
-                        padding: 0, width: '100%', maxHeight: 200
+                        padding: 0, width: '100%', maxHeight: 250
                     }}
                     textInputStyle={{
                         padding: 12,
@@ -192,7 +228,7 @@ const HomeScreen = ({route, navigation}) => {
                         color: '#222',
                     }}
                     itemsContainerStyle={{
-                        maxHeight: '60%',
+                        maxHeight: 250,
                     }}
                     items={items}
                     defaultIndex={0}
@@ -210,49 +246,29 @@ const HomeScreen = ({route, navigation}) => {
                 />
             </View>
 
-            {/* <View
-              style={{
-                flexDirection: 'row',
-                margin: 10,
-              }}
-            >
-              <Text>Country * </Text>
-              <TextInput
-                placeholder=""
-                placeholderTextColor="#000"
-                autoCapitalize="none"
-                style={{
-                  flex: 1,
-                  padding: 0,
-                  marginLeft: 5,
-                  borderBottomColor: '#000',
-                  borderBottomWidth: 1,
-                }}
-              />
-              <Ionicons name="ios-search" size={20} />
-            </View> */}
-
             <View style={{flexDirection: 'row', margin: 10,}}>
-              <Text>Taste preference * </Text>
+                <Text>Taste preference * </Text>
             </View>
 
             <View style={{flexDirection: 'column', margin: 10}}>
-              {options.map((option, index) => (
+            {options.map((option, index) => (
                 <View key={index} style={styles.flavor}>
-                  <TouchableOpacity
+                <TouchableOpacity
                     style={styles.checkbox}
                     onPress={() => pickFlavor(option)}>
                     {flavors.includes(option) && (
-                      <Text style={styles.check}>𐄂</Text>
+                    <Text style={styles.check}>𐄂</Text>
                     )}
-                  </TouchableOpacity>
-                  <Text>{option}</Text>
+                </TouchableOpacity>
+                <Text>{option}</Text>
                 </View>
-              ))}
+            ))}
             </View>
 
             <TouchableOpacity
-              onPress={() => setRegister(!register)}
+              onPress={() => {
+                setBackground(!background);
+              }}
               style={[
                 styles.signIn,
                 {
@@ -270,10 +286,9 @@ const HomeScreen = ({route, navigation}) => {
                 Sign up
               </Text>
             </TouchableOpacity>
-          </View>
-          </ScrollView>
-        // </SafeAreaView> 
-      ) : null}
+                  {/* </View> */}
+        </View>
+      ) : null }
 
       {filter ? (
         <View style={styles.formContainer}>
