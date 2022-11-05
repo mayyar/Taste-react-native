@@ -13,6 +13,7 @@ import MapView, {Marker, PROVIDER_GOOGLE} from 'react-native-maps';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {getPlaces} from '../api/MapAPI';
 import StarRating from './StarRating';
+import ReviewPage from './ReviewPage';
 
 const {width, height} = Dimensions.get('window');
 const CARD_HEIGHT = 220;
@@ -32,6 +33,7 @@ const HomeScreen = ({route, navigation}) => {
   const [detail, setDetail] = useState(false);
   const [cardID, setCardID] = useState(0);
   const [register, setRegister] = useState(true);
+  const [reviewPage, setReviewPage] = useState(false);
 
   function getFilterResults() {
     Promise.all([getPlaces()]).then(responses => {
@@ -398,7 +400,7 @@ const HomeScreen = ({route, navigation}) => {
             <Text style={styles.textDetail}>Price: $20-$30</Text>
             <Text style={styles.textDetail}>Phone: (560) 140-8610</Text>
             <TouchableOpacity
-              onPress={() => {}}
+              onPress={() => setReviewPage(!reviewPage)}
               style={[
                 styles.signIn,
                 {
@@ -413,7 +415,7 @@ const HomeScreen = ({route, navigation}) => {
                     color: 'green',
                   },
                 ]}>
-                Save
+                Write a Review
               </Text>
             </TouchableOpacity>
             <View style={{flex: 0.01}} />
@@ -444,6 +446,8 @@ const HomeScreen = ({route, navigation}) => {
           </View>
         </View>
       ) : null}
+
+      {reviewPage ? <ReviewPage onChangeValue={setReviewPage} /> : null}
     </View>
   );
 };
