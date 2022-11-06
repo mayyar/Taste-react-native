@@ -100,8 +100,8 @@ export default class SearchableDropDown extends Component {
               <Text>{ item.name }</Text>
             </View>
             <View style={{ flex: 0.1, flexDirection: 'row', alignItems: 'flex-end' }}>
-              <TouchableOpacity onPress={() => setTimeout(() => { this.props.onRemoveItem(item, index) }, 0) } style={{ backgroundColor: '#f16d6b', alignItems: 'center', justifyContent: 'center', width: 25, height: 25, borderRadius: 100, marginLeft: 10}}>
-                <Text>X</Text>
+              <TouchableOpacity onPress={() => setTimeout(() => { this.props.onRemoveItem(item, index) }, 0) } style={{ backgroundColor: '#f16d6b', alignItems: 'center', justifyContent: 'center', width: 10, height: 10, borderRadius: 100, marginLeft: 5}}>
+                {/* <Text>X</Text> */}
               </TouchableOpacity>
             </View>
           </TouchableOpacity>
@@ -237,24 +237,24 @@ export default class SearchableDropDown extends Component {
   renderSelectedItems(){
     let items = this.props.selectedItems || [];
     if(items !== undefined && items.length > 0 && this.props.chip && this.props.multi){
-     return  <View style={{flexDirection: 'row',  flexWrap: 'wrap', paddingBottom: 10, marginTop: 5 }}>
+     return  <View style={{flexDirection: 'row',  flexWrap: 'wrap', paddingBottom: 10, marginTop: 0 }}>
                  { items.map((item, index) => {
                      return (
                          <View key={index} style={{
-                                 width: (item.name.length * 8) + 60,
+                                 width: (item.name.length * 8) + 30,
                                  justifyContent: 'center',
                                  flex: 0,
                                  backgroundColor: '#eee',
                                  flexDirection: 'row',
                                  alignItems: 'center',
-                                 margin: 5,
-                                 padding: 8,
-                                 borderRadius: 15,
+                                 margin: 1,
+                                 padding: 0,
+                                 borderRadius: 5,
                              }}>
-                             <Text style={{ color: '#555' }}>{item.name}</Text>
-                             <TouchableOpacity onPress={() => setTimeout(() => { this.props.onRemoveItem(item, index) }, 0) } style={{ backgroundColor: '#f16d6b', alignItems: 'center', justifyContent: 'center', width: 25, height: 25, borderRadius: 100, marginLeft: 10}}>
-                                 <Text>X</Text>
+                              <TouchableOpacity onPress={() => setTimeout(() => { this.props.onRemoveItem(item, index) }, 0) } style={{ backgroundColor: '#f16d6b', alignItems: 'center', justifyContent: 'center', width: 10, height: 10, borderRadius: 100, marginRight: 5,}}>
+                                 {/* <Text>x</Text> */}
                              </TouchableOpacity>
+                             <Text style={{ color: '#555' }}>{item.name}</Text>
                          </View>
                  )
              }) 

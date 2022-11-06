@@ -57,7 +57,7 @@ const HomeScreen = ({route, navigation}) => {
     return <Text>No country match!</Text>;
   };
 
-  const countriesDropdown = () => {
+  const countriesDropdown = (dropdownHeight) => {
     return <SearchableDropdown
         multi={true}
         selectedItems={countries}
@@ -72,7 +72,7 @@ const HomeScreen = ({route, navigation}) => {
         containerStyle={{ 
             padding: 0, 
             width: '100%', 
-            maxHeight: 250
+            maxHeight: dropdownHeight,
         }}
         textInputStyle={{
             padding: 5,
@@ -93,29 +93,27 @@ const HomeScreen = ({route, navigation}) => {
             color: '#222',
         }}
         itemsContainerStyle={{
-            maxHeight: 250,
+            maxHeight: dropdownHeight,
         }}
         items={items}
         // defaultIndex={0}
         chip={true}
-        // placeholder="Search here"
         resetValue={true}
         listProps={{
             nestedScrollEnabled: true,
             ListEmptyComponent: handleEmpty(),
         }}
         textInputProps={{
-              placeholder: "Search here",
-              underlineColorAndroid: "transparent",
-              style: {
-                  padding: 5,
-                  borderWidth: 1,
-                  borderColor: '#111',
-                  borderRadius: 5,
-              },
-              onTextChange: text => alert(text)
+            placeholder: "Search here",
+            underlineColorAndroid: "transparent",
+            style: {
+                padding: 5,
+                borderWidth: 1,
+                borderColor: '#111',
+                borderRadius: 5,
+            },
+            onTextChange: text => alert(text)
         }}
-        // underlineColorAndroid="transparent"
     />;
   };
 
@@ -256,9 +254,12 @@ const HomeScreen = ({route, navigation}) => {
                 <Text>Country *{"\n"}</Text>
             </View>
 
+            <View style={{flexDirection: 'row', margin: 10, height:188}}>
+                {countriesDropdown(188)}
+            </View>
 
-            <View style={{flexDirection: 'row', margin: 10, height:250}}>
-                {countriesDropdown()}
+            <View style={{flexDirection: 'row', margin: 10,}}>
+                <Text>State/Province{"\n"}</Text>
             </View>
 
             <View style={{flexDirection: 'row', margin: 10,}}>
@@ -307,28 +308,18 @@ const HomeScreen = ({route, navigation}) => {
       {filter ? (
         <View style={styles.formContainer}>
           <View style={styles.textContent}>
-            <Text style={{fontWeight: 'bold', fontSize: 15}}>
-              Background Filter
-            </Text>
+            {/* <Text style={{fontWeight: 'bold', fontSize: 15}}>Background Filter</Text> */}
+
+            <Text style={{fontWeight: 'bold', fontSize: 12}}>Country Filter</Text>
+
             <View style={[styles.container, {backgroundColor: 'white', flex: 19, justifyContent: 'flex-start', alignItems: 'flex-start', padding: 10}]}>
-              <Text>Country</Text>
-              {countriesDropdown()}
-              {/* <TextInput
-                placeholder=""
-                placeholderTextColor="#000"
-                autoCapitalize="none"
-                style={{
-                  flex: 1,
-                  padding: 0,
-                  marginLeft: 5,
-                  borderBottomColor: '#000',
-                  borderBottomWidth: 1,
-                }}
-              />
-              <Ionicons name="ios-search" size={20} /> */}
+              {/* <Text>Country</Text> */}
+              {countriesDropdown(188)}
             </View>
 
-            <Text style={{fontWeight: 'bold', fontSize: 15}}>Taste Filter</Text>
+            <Text style={{fontWeight: 'bold', fontSize: 12}}>State/Province</Text>
+
+            <Text style={{fontWeight: 'bold', fontSize: 12}}>Taste Filter</Text>
 
             <View>
               {options.map((option, index) => (
