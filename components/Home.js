@@ -1,4 +1,4 @@
-import React, {useState, useEffect } from 'react';
+import React, {useState} from 'react';
 import {
   View,
   StyleSheet,
@@ -14,7 +14,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import {getPlaces} from '../api/MapAPI';
 import StarRating from './StarRating';
 import ReviewPage from './ReviewPage';
-import SearchableDropdown from 'react-native-searchable-dropdown';
+import SearchableDropdown from './react-native-searchable-dropdown';
 import { items } from './DropdownItems';
 
 const {width, height} = Dimensions.get('window');
@@ -53,6 +53,72 @@ const HomeScreen = ({route, navigation}) => {
     setFlavors(flavors => flavors.concat(selectedFlavor));
   }
 
+  const handleEmpty = () => {
+    return <Text>No country match!</Text>;
+  };
+
+  const countriesDropdown = () => {
+    return <SearchableDropdown
+        multi={true}
+        selectedItems={countries}
+        onTextChange={(text) => { }}
+        onItemSelect={(item) => { 
+            if (countries.length < 3)
+                setCountries(prevArray => [...prevArray, item]);
+        }}
+        onRemoveItem={(item, clickedIndex) => {
+            setCountries(countries => countries.filter((_, index) => index !== clickedIndex));
+        }}
+        containerStyle={{ 
+            padding: 0, 
+            width: '100%', 
+            maxHeight: 250
+        }}
+        textInputStyle={{
+            padding: 5,
+            borderWidth: 1,
+            borderColor: '#ccc',
+            backgroundColor: '#FAF7F6',
+            borderRadius: 5,
+        }}
+        itemStyle={{
+            padding: 5,
+            marginTop: 2,
+            backgroundColor: '#FAF9F8',
+            borderColor: '#bbb',
+            borderWidth: 1,
+            borderRadius: 5,
+        }}
+        itemTextStyle={{
+            color: '#222',
+        }}
+        itemsContainerStyle={{
+            maxHeight: 250,
+        }}
+        items={items}
+        // defaultIndex={0}
+        chip={true}
+        // placeholder="Search here"
+        resetValue={true}
+        listProps={{
+            nestedScrollEnabled: true,
+            ListEmptyComponent: handleEmpty(),
+        }}
+        textInputProps={{
+              placeholder: "Search here",
+              underlineColorAndroid: "transparent",
+              style: {
+                  padding: 5,
+                  borderWidth: 1,
+                  borderColor: '#111',
+                  borderRadius: 5,
+              },
+              onTextChange: text => alert(text)
+        }}
+        // underlineColorAndroid="transparent"
+    />;
+  };
+
   return (
     <View style={styles.container}>
       <MapView
@@ -86,9 +152,7 @@ const HomeScreen = ({route, navigation}) => {
       </View>
 
       {register ? (
-        // <SafeAreaView style={styles.container}>
         <View style={[styles.container, {backgroundColor: 'white', flex: 19, justifyContent: 'flex-start', alignItems: 'flex-start', padding: 10}]}>
-          {/* <View style={{backgroundColor: 'white', flex: 19, justifyContent: 'flex-start', alignItems: 'flex-start', padding: 10}}> */}
             <View style={{flexDirection: 'row', margin: 10,}}>
               <Text style={{fontWeight: 'bold', fontSize: 15}}>
                 Register
@@ -166,16 +230,14 @@ const HomeScreen = ({route, navigation}) => {
                     color: 'green',
                   },
                 ]}>
-                Sign up
+                Submit
               </Text>
             </TouchableOpacity>
           </View>
-        //   </View>
       ) : null}
 
       {background ? (
         <View style={[styles.container, {backgroundColor: 'white', flex: 19, justifyContent: 'flex-start', alignItems: 'flex-start', padding: 10}]}>  
-            {/* <View style={{backgroundColor: 'white', flex: 19, justifyContent: 'flex-start', alignItems: 'flex-start', padding: 10}}> */}
             <View style={{flexDirection: 'row', margin: 10,}}>
               <Text style={{fontWeight: 'bold', fontSize: 15}}>
                 Background
@@ -196,54 +258,7 @@ const HomeScreen = ({route, navigation}) => {
 
 
             <View style={{flexDirection: 'row', margin: 10, height:250}}>
-                <SearchableDropdown
-                    multi={true}
-                    selectedItems={countries}
-                    onTextChange={(text) => { }}
-                    onItemSelect={(item) => { 
-                        if (countries.length < 3)
-                            setCountries(prevArray => [...prevArray, item]);
-                    }}
-                    onRemoveItem={(item, clickedIndex) => {
-                        setCountries(countries => countries.filter((_, index) => index !== clickedIndex));
-                    }}
-                    containerStyle={{ 
-                        padding: 0, width: '100%', maxHeight: 250
-                    }}
-                    textInputStyle={{
-                        padding: 12,
-                        borderWidth: 1,
-                        borderColor: '#ccc',
-                        backgroundColor: '#FAF7F6',
-                    }}
-                    itemStyle={{
-                        padding: 10,
-                        marginTop: 2,
-                        backgroundColor: '#FAF9F8',
-                        borderColor: '#bbb',
-                        borderWidth: 1,
-                        borderRadius: 0,
-                    }}
-                    itemTextStyle={{
-                        color: '#222',
-                    }}
-                    itemsContainerStyle={{
-                        maxHeight: 250,
-                    }}
-                    items={items}
-                    defaultIndex={0}
-                    chip={true}
-                    placeholder="type in to search"
-                    resetValue={false}
-                    listProps={{
-                        nestedScrollEnabled: false,
-                        
-                        // ListEmptyComponent: 'aaa',
-                        initialNumToRender: 3,
-                        // horizontal: true,
-                    }}
-                    underlineColorAndroid="transparent"
-                />
+                {countriesDropdown()}
             </View>
 
             <View style={{flexDirection: 'row', margin: 10,}}>
@@ -286,7 +301,6 @@ const HomeScreen = ({route, navigation}) => {
                 Sign up
               </Text>
             </TouchableOpacity>
-                  {/* </View> */}
         </View>
       ) : null }
 
@@ -296,13 +310,10 @@ const HomeScreen = ({route, navigation}) => {
             <Text style={{fontWeight: 'bold', fontSize: 15}}>
               Background Filter
             </Text>
-            <View
-              style={{
-                flexDirection: 'row',
-                margin: 10,
-              }}>
+            <View style={[styles.container, {backgroundColor: 'white', flex: 19, justifyContent: 'flex-start', alignItems: 'flex-start', padding: 10}]}>
               <Text>Country</Text>
-              <TextInput
+              {countriesDropdown()}
+              {/* <TextInput
                 placeholder=""
                 placeholderTextColor="#000"
                 autoCapitalize="none"
@@ -314,7 +325,7 @@ const HomeScreen = ({route, navigation}) => {
                   borderBottomWidth: 1,
                 }}
               />
-              <Ionicons name="ios-search" size={20} />
+              <Ionicons name="ios-search" size={20} /> */}
             </View>
 
             <Text style={{fontWeight: 'bold', fontSize: 15}}>Taste Filter</Text>
@@ -339,6 +350,7 @@ const HomeScreen = ({route, navigation}) => {
                 style={styles.filterButton}
                 onPress={() => {
                   getFilterResults();
+                  setFilter(!filter);
                   setSubmit(!submit);
                 }}>
                 <Text style={styles.textFilter}>Skip</Text>
@@ -347,6 +359,7 @@ const HomeScreen = ({route, navigation}) => {
                 style={styles.filterButton}
                 onPress={() => {
                   getFilterResults();
+                  setFilter(!filter);
                   setSubmit(!submit);
                 }}>
                 <Text style={styles.textFilter}>Submit</Text>
