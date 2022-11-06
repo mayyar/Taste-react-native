@@ -340,15 +340,15 @@ const HomeScreen = ({route, navigation}) => {
                 <Text>Country *{"\n"}</Text>
             </View>
 
-            <View style={{flexDirection: 'row', marginLeft: 10, height:120}}>
-                {countriesDropdown(120)}
+            <View style={{flexDirection: 'row', marginLeft: 10}}>
+                {countriesDropdown(140)}
             </View>
 
             <View style={{flexDirection: 'row', marginLeft: 10, marginTop:10,}}>
                 <Text>State/Province{"\n"}</Text>
             </View>
 
-            <View style={{flexDirection: 'row', marginLeft: 10, height:120}}>
+            <View style={{flexDirection: 'row', marginLeft: 10}}>
                 {statesProvsDropdown(120)}
             </View>
 
