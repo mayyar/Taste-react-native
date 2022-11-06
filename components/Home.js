@@ -314,7 +314,7 @@ const HomeScreen = ({route, navigation}) => {
                     color: 'green',
                   },
                 ]}>
-                Submit
+                Sign Up
               </Text>
             </TouchableOpacity>
           </View>
@@ -328,31 +328,31 @@ const HomeScreen = ({route, navigation}) => {
               </Text>
             </View>
 
-            <View style={{flexDirection: 'row', margin: 10,}}>
+            <View style={{flexDirection: 'row', marginLeft: 10,  marginBottom: 10,}}>
               <Text>* Required</Text>
             </View>
 
-            <View style={{flexDirection: 'row', margin: 10,}}>
+            <View style={{flexDirection: 'row', marginLeft: 10,  marginBottom: 10,}}>
                 <Text>In order to make your ratings more meaningful, we invite you to provide the following information:</Text>
             </View>
 
-            <View style={{flexDirection: 'row', margin: 10,}}>
+            <View style={{flexDirection: 'row', marginLeft: 10,}}>
                 <Text>Country *{"\n"}</Text>
             </View>
 
-            <View style={{flexDirection: 'row', margin: 10, height:188}}>
-                {countriesDropdown(188)}
+            <View style={{flexDirection: 'row', marginLeft: 10, height:120}}>
+                {countriesDropdown(120)}
             </View>
 
-            <View style={{flexDirection: 'row', margin: 10,}}>
+            <View style={{flexDirection: 'row', marginLeft: 10, marginTop:10,}}>
                 <Text>State/Province{"\n"}</Text>
             </View>
 
-            {/* <View style={{flexDirection: 'row', margin: 10, height:188}}>
-                {statesProvsDropdown(188)}
-            </View> */}
+            <View style={{flexDirection: 'row', marginLeft: 10, height:120}}>
+                {statesProvsDropdown(120)}
+            </View>
 
-            <View style={{flexDirection: 'row', margin: 10,}}>
+            <View style={{flexDirection: 'row', marginLeft: 10, marginTop:10,}}>
                 <Text>Taste preference * </Text>
             </View>
 
@@ -389,7 +389,7 @@ const HomeScreen = ({route, navigation}) => {
                     color: 'green',
                   },
                 ]}>
-                Sign up
+                Submit
               </Text>
             </TouchableOpacity>
         </View>
@@ -398,18 +398,20 @@ const HomeScreen = ({route, navigation}) => {
       {filter ? (
         <View style={styles.formContainer}>
           <View style={styles.textContent}>
-            {/* <Text style={{fontWeight: 'bold', fontSize: 15}}>Background Filter</Text> */}
+            <View style={{flexDirection: 'row', marginBottom: 10,}}>
+              <Text>Search certain reviews you like.</Text>
+            </View>
 
             <Text style={{fontWeight: 'bold', fontSize: 12}}>Country Filter</Text>
 
             <View style={[styles.container, {backgroundColor: 'white', flex: 19, justifyContent: 'flex-start', alignItems: 'flex-start', padding: 10}]}>
-              {countriesDropdown(188)}
+              {countriesDropdown(140)}
             </View>
 
             <Text style={{fontWeight: 'bold', fontSize: 12}}>State/Province Filter</Text>
 
             <View style={[styles.container, {backgroundColor: 'white', flex: 19, justifyContent: 'flex-start', alignItems: 'flex-start', padding: 10}]}>
-              {statesProvsDropdown(188)}
+              {statesProvsDropdown(90)}
             </View>
 
             <Text style={{fontWeight: 'bold', fontSize: 12}}>Taste Filter</Text>
