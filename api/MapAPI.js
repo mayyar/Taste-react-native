@@ -6,20 +6,21 @@ export function getCurrentLocation() {
   );
 }
 
-function getPlacesUrl(lat, long, radius, type, apiKey) {
+function getPlacesUrl(keyword, lat, long, radius, type, apiKey) {
   const baseUrl = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?`;
   const location = `location=${lat},${long}&radius=${radius}`;
-  const typeData = `&types=${type}`;
+  const typeData = `&keyword=${keyword}&types=${type}`;
   const api = `&key=${apiKey}`;
   return `${baseUrl}${location}${typeData}${api}`;
 }
 
-export async function getPlaces() {
+export async function getPlaces(keyword) {
   const apiKey = 'AIzaSyAknkMCF_NtwGapqISj2lsi3EsoG8l8lJc';
   let position = await getCurrentLocation(),
     {coords} = position;
   const markers = [];
   const url = getPlacesUrl(
+    keyword,
     coords.latitude,
     coords.longitude,
     1500,

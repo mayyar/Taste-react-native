@@ -33,6 +33,7 @@ const HomeScreen = ({route, navigation}) => {
     tastePref: [],
   };
   const [userAccountState, setUserAccountState] = useState(initUserAccountState);
+  const [searchRestaurant, setSearchRestaurant] = useState("Restaurant");
   const [mapState, setMapState] = useState(initMapState);
   const [userId, setUserId] = useState(-1);
   const [filter, setFilter] = useState(false);
@@ -47,8 +48,8 @@ const HomeScreen = ({route, navigation}) => {
   const [inputText, onChangeInputText] = useState("");
   const [location, setLocation] = useState([]);
 
-  function getFilterResults() {
-    Promise.all([getPlaces()]).then(responses => {
+  function getFilterResults(keyword) {
+    Promise.all([getPlaces(keyword)]).then(responses => {
       setMapState(responses[0]);
     });
   }
@@ -86,6 +87,7 @@ const HomeScreen = ({route, navigation}) => {
           placeholder="Search here"
           placeholderTextColor="#000"
           autoCapitalize="none"
+          onChangeText={newText => setSearchRestaurant(newText)}
           style={{flex: 1, padding: 0}}
         />
         <TouchableOpacity onPress={() => setFilter(!filter)}>
@@ -340,7 +342,7 @@ const HomeScreen = ({route, navigation}) => {
               <TouchableOpacity
                 style={styles.filterButton}
                 onPress={() => {
-                  getFilterResults();
+                  getFilterResults(searchRestaurant);
                   setFilter(!filter);
                   setSubmit(!submit);
                 }}>
@@ -349,7 +351,7 @@ const HomeScreen = ({route, navigation}) => {
               <TouchableOpacity
                 style={styles.filterButton}
                 onPress={() => {
-                  getFilterResults();
+                  getFilterResults(searchRestaurant);
                   setFilter(!filter);
                   setSubmit(!submit);
                 }}>
