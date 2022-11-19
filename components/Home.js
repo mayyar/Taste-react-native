@@ -33,7 +33,10 @@ const HomeScreen = ({route, navigation}) => {
   const [detail, setDetail] = useState(false);
   const [cardID, setCardID] = useState(0);
   const [register, setRegister] = useState(true);
+  const [background, setBackground] = useState(false);
   const [reviewPage, setReviewPage] = useState(false);
+  const [inputText, onChangeInputText] = useState("");
+  const [location, setLocation] = useState([]);
 
   function getFilterResults() {
     Promise.all([getPlaces()]).then(responses => {
@@ -82,28 +85,19 @@ const HomeScreen = ({route, navigation}) => {
       </View>
 
       {register ? (
-        <View style={styles.container}>
-          <View
-            style={{
-              backgroundColor: 'white',
-              flex: 1,
-              alignItems: 'flex-start',
-            }}></View>
-
-          <View
-            style={{
-              backgroundColor: 'white',
-              flex: 19,
-              justifyContent: 'flex-start',
-              alignItems: 'flex-start',
-              padding: 10,
-            }}>
-            <View style={{flexDirection: 'row', margin: 10}}>
-              <Text style={{fontWeight: 'bold', fontSize: 15}}>Register</Text>
+        <View style={[styles.container, {backgroundColor: 'white', flex: 19, justifyContent: 'flex-start', alignItems: 'flex-start', padding: 10}]}>
+            <View style={{flexDirection: 'row', margin: 10,}}>
+              <Text style={{fontWeight: 'bold', fontSize: 15}}>
+                Register
+              </Text>
             </View>
 
-            <View style={{flexDirection: 'row', margin: 10}}>
-              <Text>Username: </Text>
+            <View style={{flexDirection: 'row', margin: 10,}}>
+              <Text>* Required</Text>
+            </View>
+
+            <View style={{flexDirection: 'row', margin: 10,}}>
+              <Text>Username * </Text>
               <TextInput
                 placeholder=""
                 placeholderTextColor="#000"
@@ -118,8 +112,8 @@ const HomeScreen = ({route, navigation}) => {
               />
             </View>
 
-            <View style={{flexDirection: 'row', margin: 10}}>
-              <Text>Passward: </Text>
+            <View style={{flexDirection: 'row', margin: 10,}}>
+              <Text>Passward * </Text>
               <TextInput
                 placeholder=""
                 placeholderTextColor="#000"
@@ -134,12 +128,8 @@ const HomeScreen = ({route, navigation}) => {
               />
             </View>
 
-            <View
-              style={{
-                flexDirection: 'row',
-                margin: 10,
-              }}>
-              <Text>Country: </Text>
+            <View style={{flexDirection: 'row', margin: 10,}}>
+              <Text>Re-enter Passward * </Text>
               <TextInput
                 placeholder=""
                 placeholderTextColor="#000"
@@ -152,30 +142,13 @@ const HomeScreen = ({route, navigation}) => {
                   borderBottomWidth: 1,
                 }}
               />
-              <Ionicons name="ios-search" size={20} />
-            </View>
-
-            <View style={{flexDirection: 'row', margin: 10}}>
-              <Text>Taste preference: </Text>
-            </View>
-
-            <View style={{flexDirection: 'column', margin: 10}}>
-              {options.map((option, index) => (
-                <View key={index} style={styles.flavor}>
-                  <TouchableOpacity
-                    style={styles.checkbox}
-                    onPress={() => pickFlavor(option)}>
-                    {flavors.includes(option) && (
-                      <Text style={styles.check}>𐄂</Text>
-                    )}
-                  </TouchableOpacity>
-                  <Text>{option}</Text>
-                </View>
-              ))}
             </View>
 
             <TouchableOpacity
-              onPress={() => setRegister(!register)}
+              onPress={() => {
+                setRegister(!register); 
+                setBackground(!background);
+            }}
               style={[
                 styles.signIn,
                 {
@@ -190,41 +163,145 @@ const HomeScreen = ({route, navigation}) => {
                     color: 'green',
                   },
                 ]}>
-                Sign up
+                Sign Up
               </Text>
             </TouchableOpacity>
           </View>
-        </View>
       ) : null}
+
+      {background ? (
+        <View style={[styles.container, {backgroundColor: 'white', flex: 19, justifyContent: 'flex-start', alignItems: 'flex-start', padding: 10}]}>  
+            <View style={{flexDirection: 'row', margin: 10,}}>
+              <Text style={{fontWeight: 'bold', fontSize: 15}}>
+                Background
+              </Text>
+            </View>
+
+            <View style={{flexDirection: 'row', marginLeft: 10,  marginBottom: 10,}}>
+              <Text>* Required</Text>
+            </View>
+
+            <View style={{flexDirection: 'row', marginLeft: 10,  marginBottom: 10,}}>
+                <Text>In order to make your ratings more meaningful, we invite you to provide the following information:</Text>
+            </View>
+
+            <View style={{flexDirection: 'row', marginLeft: 10,}}>
+                <Text>Location *{"\n"}</Text>
+            </View>
+
+            <View style={{flexDirection: 'column', marginLeft: 10}}>
+                <View style={{flexDirection: 'row',}}>
+                  {Array.isArray(location) ?
+                    location.map((tag) => (
+                      <TouchableOpacity 
+                        style={styles.buttonTag} 
+                        key={tag}
+                        onPress={() => {setLocation(location => location.filter((item, index) => item !== tag));}}
+                      >
+                        <Text style={{}}>{tag}</Text>
+                      </TouchableOpacity>
+                    ))
+                  : null}
+                </View>
+            </View>
+
+            <View style={{flexDirection: 'column', marginLeft: 10}}>
+                <TextInput
+                  style={styles.input}
+                  onChangeText={onChangeInputText}
+                  onSubmitEditing={() => {
+                    if (location.length < 3) 
+                      setLocation(prevArray => [... prevArray, inputText]);
+                    onChangeInputText("");
+                  }}
+                  value={inputText}
+                  placeholder="Press enter to add"
+                />
+            </View>
+
+            <View style={{flexDirection: 'row', marginLeft: 10, marginTop:10,}}>
+                <Text>Taste preference * </Text>
+            </View>
+
+            <View style={{flexDirection: 'column', margin: 10}}>
+            {options.map((option, index) => (
+                <View key={index} style={styles.flavor}>
+                <TouchableOpacity
+                    style={styles.checkbox}
+                    onPress={() => pickFlavor(option)}>
+                    {flavors.includes(option) && (
+                    <Text style={styles.check}>𐄂</Text>
+                    )}
+                </TouchableOpacity>
+                <Text>{option}</Text>
+                </View>
+            ))}
+            </View>
+
+            <TouchableOpacity
+              onPress={() => {
+                setBackground(!background);
+              }}
+              style={[
+                styles.signIn,
+                {
+                  borderColor: 'green',
+                  borderWidth: 1,
+                },
+              ]}>
+              <Text
+                style={[
+                  styles.textSign,
+                  {
+                    color: 'green',
+                  },
+                ]}>
+                Submit
+              </Text>
+            </TouchableOpacity>
+        </View>
+      ) : null }
 
       {filter ? (
         <View style={styles.formContainer}>
           <View style={styles.textContent}>
-            <Text style={{fontWeight: 'bold', fontSize: 15}}>
-              Background Filter
-            </Text>
-            <View
-              style={{
-                flexDirection: 'row',
-                margin: 10,
-              }}>
-              <Text>Country</Text>
-              <TextInput
-                placeholder=""
-                placeholderTextColor="#000"
-                autoCapitalize="none"
-                style={{
-                  flex: 1,
-                  padding: 0,
-                  marginLeft: 5,
-                  borderBottomColor: '#000',
-                  borderBottomWidth: 1,
-                }}
-              />
-              <Ionicons name="ios-search" size={20} />
+            <View style={{flexDirection: 'row', marginBottom: 10,}}>
+              <Text>Search certain reviews you like.</Text>
             </View>
 
-            <Text style={{fontWeight: 'bold', fontSize: 15}}>Taste Filter</Text>
+            <Text style={{fontWeight: 'bold', fontSize: 12, paddingBottom: 12,}}>Location preference Filter</Text>
+
+            <View style={{flexDirection: 'column', marginLeft: 0}}>
+              <View style={{flexDirection: 'row',}}>
+                {Array.isArray(location) ?
+                  location.map((tag) => (
+                    <TouchableOpacity 
+                      style={styles.buttonTag} 
+                      key={tag}
+                      onPress={() => {setLocation(location => location.filter((item, index) => item !== tag));}}
+                    >
+                      <Text style={{}}>{tag}</Text>
+                    </TouchableOpacity>
+                  ))
+                : null}
+              </View>
+            </View>
+
+            <View style={{flexDirection: 'column', marginLeft: 0}}>
+                <TextInput
+                  style={styles.input}
+                  onChangeText={onChangeInputText}
+                  onSubmitEditing={() => {
+                    if (location.length < 3) 
+                      setLocation(prevArray => [... prevArray, inputText]);
+                    onChangeInputText("");
+                  }}
+                  value={inputText}
+                  placeholder="Press enter to add"
+                />
+            </View>
+
+            <Text style={{fontWeight: 'bold', fontSize: 12}}>Taste Filter</Text>
 
             <View>
               {options.map((option, index) => (
@@ -246,6 +323,7 @@ const HomeScreen = ({route, navigation}) => {
                 style={styles.filterButton}
                 onPress={() => {
                   getFilterResults();
+                  setFilter(!filter);
                   setSubmit(!submit);
                 }}>
                 <Text style={styles.textFilter}>Skip</Text>
@@ -254,6 +332,7 @@ const HomeScreen = ({route, navigation}) => {
                 style={styles.filterButton}
                 onPress={() => {
                   getFilterResults();
+                  setFilter(!filter);
                   setSubmit(!submit);
                 }}>
                 <Text style={styles.textFilter}>Submit</Text>
@@ -589,5 +668,18 @@ const styles = StyleSheet.create({
     // alignSelf: 'stretch',
     // resizeMode: 'contain',
     // alignSelf: 'center',
+  },
+  input: {
+    width: width*0.8,
+    height: 40,
+    marginVertical: 10,
+    borderWidth: 1,
+    padding: 10,
+  },
+  buttonTag: {
+    backgroundColor: "powderblue",
+    padding: 4,
+    borderRadius: 10,
+    marginRight: 5,
   },
 });
