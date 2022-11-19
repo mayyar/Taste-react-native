@@ -14,37 +14,10 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import {getPlaces} from '../api/MapAPI';
 import StarRating from './StarRating';
 import ReviewPage from './ReviewPage';
-import SearchableDropdown from './react-native-searchable-dropdown';
-import { items } from './DropdownItems';
 
 const {width, height} = Dimensions.get('window');
 const CARD_HEIGHT = 220;
 const CARD_WIDTH = width * 0.8;
-
-let statesItems = [];
-const fetch = (url, init) =>
-    import('node-fetch').then(({ default: fetch }) => fetch(url, init));
-(async () => {
-    const where = encodeURIComponent(JSON.stringify({
-        "Country_Code": "US",
-        "Subdivion_Type": {
-            "$regex": 'State|Province'
-        }
-    }));
-    const response = await fetch(
-        `https://parseapi.back4app.com/classes/Subdivisions_States_Provinces?order=Subdivision_Name&where=${where}`,
-        {
-          headers: {
-            'X-Parse-Application-Id': 'mxsebv4KoWIGkRntXwyzg6c6DhKWQuit8Ry9sHja', // This is the fake app's application id
-            'X-Parse-Master-Key': 'TpO0j3lG2PmEVMXlKYQACoOXKQrL3lwM0HwR9dbH', // This is the fake app's readonly master key
-          }
-        }
-    );
-    const data = await response.json(); // Here you have the data that you need
-    let n = data.results.length;
-    for (let i = 0; i < n; ++i) 
-        statesItems.push({'id': i, 'name': data.results[i].Subdivision_Name});
-})();
 
 const HomeScreen = ({route, navigation}) => {
   const initMapState = {
@@ -62,8 +35,6 @@ const HomeScreen = ({route, navigation}) => {
   const [register, setRegister] = useState(true);
   const [background, setBackground] = useState(false);
   const [reviewPage, setReviewPage] = useState(false);
-  const [countries, setCountries] = useState([]);
-  const [statesProvs, setStatesProvs] = useState([]);
   const [inputText, onChangeInputText] = useState("");
   const [location, setLocation] = useState([]);
 
@@ -81,10 +52,6 @@ const HomeScreen = ({route, navigation}) => {
     setFlavors(flavors => flavors.concat(selectedFlavor));
   }
 
-  const handleEmpty = () => {
-    return <Text>No country match!</Text>;
-  };
-
   const genTags = (tag) => (
     <TouchableOpacity 
       style={styles.buttonTag} 
@@ -93,126 +60,6 @@ const HomeScreen = ({route, navigation}) => {
       <Text style={{}}>{tag}</Text>
     </TouchableOpacity>
   );
-
-  const countriesDropdown = (dropdownHeight) => {
-    return <SearchableDropdown
-        multi={true}
-        selectedItems={countries}
-        onTextChange={(text) => { }}
-        onItemSelect={(item) => { 
-            if (countries.length < 3)
-                setCountries(prevArray => [...prevArray, item]);
-        }}
-        onRemoveItem={(item, clickedIndex) => {
-            setCountries(countries => countries.filter((_, index) => index !== clickedIndex));
-        }}
-        containerStyle={{ 
-            padding: 0, 
-            width: '100%', 
-            maxHeight: dropdownHeight,
-        }}
-        textInputStyle={{
-            padding: 5,
-            borderWidth: 1,
-            borderColor: '#ccc',
-            backgroundColor: '#FAF7F6',
-            borderRadius: 5,
-        }}
-        itemStyle={{
-            padding: 5,
-            marginTop: 2,
-            backgroundColor: '#FAF9F8',
-            borderColor: '#bbb',
-            borderWidth: 1,
-            borderRadius: 5,
-        }}
-        itemTextStyle={{
-            color: '#222',
-        }}
-        itemsContainerStyle={{
-            maxHeight: dropdownHeight,
-        }}
-        items={items}
-        // defaultIndex={0}
-        chip={true}
-        resetValue={true}
-        listProps={{
-            nestedScrollEnabled: true,
-            ListEmptyComponent: handleEmpty(),
-        }}
-        textInputProps={{
-            placeholder: "Search here",
-            underlineColorAndroid: "transparent",
-            style: {
-                padding: 5,
-                borderWidth: 1,
-                borderColor: '#111',
-                borderRadius: 5,
-            },
-            onTextChange: text => alert(text)
-        }}
-    />;
-  };
-
-  const statesProvsDropdown = (dropdownHeight) => {
-    return <SearchableDropdown
-        multi={true}
-        selectedItems={statesProvs}
-        onTextChange={(text) => { }}
-        onItemSelect={(item) => { 
-            if (statesProvs.length < 1)
-                setStatesProvs(prevArray => [...prevArray, item]);
-        }}
-        onRemoveItem={(item, clickedIndex) => {
-            setStatesProvs(statesProvs => statesProvs.filter((_, index) => index !== clickedIndex));
-        }}
-        containerStyle={{ 
-            padding: 0, 
-            width: '100%', 
-            maxHeight: dropdownHeight,
-        }}
-        textInputStyle={{
-            padding: 5,
-            borderWidth: 1,
-            borderColor: '#ccc',
-            backgroundColor: '#FAF7F6',
-            borderRadius: 5,
-        }}
-        itemStyle={{
-            padding: 5,
-            marginTop: 2,
-            backgroundColor: '#FAF9F8',
-            borderColor: '#bbb',
-            borderWidth: 1,
-            borderRadius: 5,
-        }}
-        itemTextStyle={{
-            color: '#222',
-        }}
-        itemsContainerStyle={{
-            maxHeight: dropdownHeight,
-        }}
-        items={statesItems}
-        // defaultIndex={0}
-        chip={true}
-        resetValue={true}
-        listProps={{
-            nestedScrollEnabled: true,
-            ListEmptyComponent: handleEmpty(),
-        }}
-        textInputProps={{
-            placeholder: "Search here",
-            underlineColorAndroid: "transparent",
-            style: {
-                padding: 5,
-                borderWidth: 1,
-                borderColor: '#111',
-                borderRadius: 5,
-            },
-            onTextChange: text => alert(text)
-        }}
-    />;
-  };
 
   return (
     <View style={styles.container}>
@@ -351,16 +198,7 @@ const HomeScreen = ({route, navigation}) => {
                 <Text>Location *{"\n"}</Text>
             </View>
 
-            {/* <View style={{flexDirection: 'row', marginLeft: 10}}>
-                {countriesDropdown(140)}
-            </View> */}
-
-            {/* <View style={{flexDirection: 'row', marginLeft: 10, marginTop:10,}}>
-                <Text>State/Province{"\n"}</Text>
-            </View> */}
-
             <View style={{flexDirection: 'column', marginLeft: 10}}>
-                {/* {statesProvsDropdown(120)} */}
                 <View style={{flexDirection: 'row',}}>
                   {Array.isArray(location) ?
                     location.map((number) => {
@@ -436,7 +274,6 @@ const HomeScreen = ({route, navigation}) => {
             <Text style={{fontWeight: 'bold', fontSize: 12, paddingBottom: 12,}}>Location preference Filter</Text>
 
             <View style={{flexDirection: 'column', marginLeft: 0}}>
-                {/* {statesProvsDropdown(120)} */}
                 <View style={{flexDirection: 'row',}}>
                   {Array.isArray(location) ?
                     location.map((number) => {
@@ -458,16 +295,6 @@ const HomeScreen = ({route, navigation}) => {
                   placeholder="Press enter to add"
                 />
             </View>
-
-            {/* <View style={[styles.container, {backgroundColor: 'white', flex: 19, justifyContent: 'flex-start', alignItems: 'flex-start', padding: 10}]}>
-              {countriesDropdown(140)}
-            </View>
-
-            <Text style={{fontWeight: 'bold', fontSize: 12}}>State/Province Filter</Text>
-
-            <View style={[styles.container, {backgroundColor: 'white', flex: 19, justifyContent: 'flex-start', alignItems: 'flex-start', padding: 10}]}>
-              {statesProvsDropdown(90)}
-            </View> */}
 
             <Text style={{fontWeight: 'bold', fontSize: 12}}>Taste Filter</Text>
 
