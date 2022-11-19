@@ -12,6 +12,7 @@ import {
 import MapView, {Marker, PROVIDER_GOOGLE} from 'react-native-maps';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {getPlaces} from '../api/MapAPI';
+import {createUser} from '../api/APIUtils';
 import StarRating from './StarRating';
 import ReviewPage from './ReviewPage';
 
@@ -25,7 +26,15 @@ const HomeScreen = ({route, navigation}) => {
     long: -84.3923,
     places: [],
   };
+  const initUserAccountState = {
+    username: "",
+    password: "",
+    country: "",
+    tastePref: [],
+  };
+  const [userAccountState, setUserAccountState] = useState(initUserAccountState);
   const [mapState, setMapState] = useState(initMapState);
+  const [userId, setUserId] = useState(-1);
   const [filter, setFilter] = useState(false);
   const [submit, setSubmit] = useState(false);
   const [flavors, setFlavors] = useState([]);
@@ -102,6 +111,7 @@ const HomeScreen = ({route, navigation}) => {
                 placeholder=""
                 placeholderTextColor="#000"
                 autoCapitalize="none"
+                onChangeText={newText => userAccountState.username = newText}
                 style={{
                   flex: 1,
                   padding: 0,
@@ -118,6 +128,7 @@ const HomeScreen = ({route, navigation}) => {
                 placeholder=""
                 placeholderTextColor="#000"
                 autoCapitalize="none"
+                onChangeText={newText => userAccountState.password = newText}
                 style={{
                   flex: 1,
                   padding: 0,
@@ -213,6 +224,7 @@ const HomeScreen = ({route, navigation}) => {
                     if (location.length < 3) 
                       setLocation(prevArray => [... prevArray, inputText]);
                     onChangeInputText("");
+                    userAccountState.country = inputText;
                   }}
                   value={inputText}
                   placeholder="Press enter to add"
@@ -240,6 +252,12 @@ const HomeScreen = ({route, navigation}) => {
 
             <TouchableOpacity
               onPress={() => {
+                userAccountState.tastePref = flavors;
+                const { username, password, country, tastePref} = userAccountState;
+                Promise.all([createUser(username, password, country, tastePref)]).then(responses => {
+                  setUserId(responses[0]);
+                });
+
                 setBackground(!background);
               }}
               style={[
