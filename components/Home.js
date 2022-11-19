@@ -64,6 +64,8 @@ const HomeScreen = ({route, navigation}) => {
   const [reviewPage, setReviewPage] = useState(false);
   const [countries, setCountries] = useState([]);
   const [statesProvs, setStatesProvs] = useState([]);
+  const [inputText, onChangeInputText] = useState("");
+  const [location, setLocation] = useState([]);
 
   function getFilterResults() {
     Promise.all([getPlaces()]).then(responses => {
@@ -82,6 +84,15 @@ const HomeScreen = ({route, navigation}) => {
   const handleEmpty = () => {
     return <Text>No country match!</Text>;
   };
+
+  const genTags = (tag) => (
+    <TouchableOpacity 
+      style={styles.buttonTag} 
+      key={tag}
+    >
+      <Text style={{}}>{tag}</Text>
+    </TouchableOpacity>
+  );
 
   const countriesDropdown = (dropdownHeight) => {
     return <SearchableDropdown
@@ -337,19 +348,39 @@ const HomeScreen = ({route, navigation}) => {
             </View>
 
             <View style={{flexDirection: 'row', marginLeft: 10,}}>
-                <Text>Country *{"\n"}</Text>
+                <Text>Location *{"\n"}</Text>
             </View>
 
-            <View style={{flexDirection: 'row', marginLeft: 10}}>
+            {/* <View style={{flexDirection: 'row', marginLeft: 10}}>
                 {countriesDropdown(140)}
-            </View>
+            </View> */}
 
-            <View style={{flexDirection: 'row', marginLeft: 10, marginTop:10,}}>
+            {/* <View style={{flexDirection: 'row', marginLeft: 10, marginTop:10,}}>
                 <Text>State/Province{"\n"}</Text>
+            </View> */}
+
+            <View style={{flexDirection: 'column', marginLeft: 10}}>
+                {/* {statesProvsDropdown(120)} */}
+                <View style={{flexDirection: 'row',}}>
+                  {Array.isArray(location) ?
+                    location.map((number) => {
+                      return genTags(number);
+                    })
+                  : null}
+                </View>
             </View>
 
-            <View style={{flexDirection: 'row', marginLeft: 10}}>
-                {statesProvsDropdown(120)}
+            <View style={{flexDirection: 'column', marginLeft: 10}}>
+                <TextInput
+                  style={styles.input}
+                  onChangeText={onChangeInputText}
+                  onSubmitEditing={() => {
+                    setLocation(prevArray => [... prevArray, inputText]);
+                    onChangeInputText("");
+                  }}
+                  value={inputText}
+                  placeholder="Press enter to add"
+                />
             </View>
 
             <View style={{flexDirection: 'row', marginLeft: 10, marginTop:10,}}>
@@ -402,9 +433,33 @@ const HomeScreen = ({route, navigation}) => {
               <Text>Search certain reviews you like.</Text>
             </View>
 
-            <Text style={{fontWeight: 'bold', fontSize: 12}}>Country Filter</Text>
+            <Text style={{fontWeight: 'bold', fontSize: 12, paddingBottom: 12,}}>Location preference Filter</Text>
 
-            <View style={[styles.container, {backgroundColor: 'white', flex: 19, justifyContent: 'flex-start', alignItems: 'flex-start', padding: 10}]}>
+            <View style={{flexDirection: 'column', marginLeft: 0}}>
+                {/* {statesProvsDropdown(120)} */}
+                <View style={{flexDirection: 'row',}}>
+                  {Array.isArray(location) ?
+                    location.map((number) => {
+                      return genTags(number);
+                    })
+                  : null}
+                </View>
+            </View>
+
+            <View style={{flexDirection: 'column', marginLeft: 0}}>
+                <TextInput
+                  style={styles.input}
+                  onChangeText={onChangeInputText}
+                  onSubmitEditing={() => {
+                    setLocation(prevArray => [... prevArray, inputText]);
+                    onChangeInputText("");
+                  }}
+                  value={inputText}
+                  placeholder="Press enter to add"
+                />
+            </View>
+
+            {/* <View style={[styles.container, {backgroundColor: 'white', flex: 19, justifyContent: 'flex-start', alignItems: 'flex-start', padding: 10}]}>
               {countriesDropdown(140)}
             </View>
 
@@ -412,7 +467,7 @@ const HomeScreen = ({route, navigation}) => {
 
             <View style={[styles.container, {backgroundColor: 'white', flex: 19, justifyContent: 'flex-start', alignItems: 'flex-start', padding: 10}]}>
               {statesProvsDropdown(90)}
-            </View>
+            </View> */}
 
             <Text style={{fontWeight: 'bold', fontSize: 12}}>Taste Filter</Text>
 
@@ -781,5 +836,18 @@ const styles = StyleSheet.create({
     // alignSelf: 'stretch',
     // resizeMode: 'contain',
     // alignSelf: 'center',
+  },
+  input: {
+    width: width*0.8,
+    height: 40,
+    marginVertical: 10,
+    borderWidth: 1,
+    padding: 10,
+  },
+  buttonTag: {
+    backgroundColor: "powderblue",
+    padding: 4,
+    borderRadius: 10,
+    marginRight: 5,
   },
 });
