@@ -52,15 +52,6 @@ const HomeScreen = ({route, navigation}) => {
     setFlavors(flavors => flavors.concat(selectedFlavor));
   }
 
-  const genTags = (tag) => (
-    <TouchableOpacity 
-      style={styles.buttonTag} 
-      key={tag}
-    >
-      <Text style={{}}>{tag}</Text>
-    </TouchableOpacity>
-  );
-
   return (
     <View style={styles.container}>
       <MapView
@@ -201,9 +192,15 @@ const HomeScreen = ({route, navigation}) => {
             <View style={{flexDirection: 'column', marginLeft: 10}}>
                 <View style={{flexDirection: 'row',}}>
                   {Array.isArray(location) ?
-                    location.map((number) => {
-                      return genTags(number);
-                    })
+                    location.map((tag) => (
+                      <TouchableOpacity 
+                        style={styles.buttonTag} 
+                        key={tag}
+                        onPress={() => {setLocation(location => location.filter((item, index) => item !== tag));}}
+                      >
+                        <Text style={{}}>{tag}</Text>
+                      </TouchableOpacity>
+                    ))
                   : null}
                 </View>
             </View>
@@ -213,7 +210,8 @@ const HomeScreen = ({route, navigation}) => {
                   style={styles.input}
                   onChangeText={onChangeInputText}
                   onSubmitEditing={() => {
-                    setLocation(prevArray => [... prevArray, inputText]);
+                    if (location.length < 3) 
+                      setLocation(prevArray => [... prevArray, inputText]);
                     onChangeInputText("");
                   }}
                   value={inputText}
@@ -274,13 +272,19 @@ const HomeScreen = ({route, navigation}) => {
             <Text style={{fontWeight: 'bold', fontSize: 12, paddingBottom: 12,}}>Location preference Filter</Text>
 
             <View style={{flexDirection: 'column', marginLeft: 0}}>
-                <View style={{flexDirection: 'row',}}>
-                  {Array.isArray(location) ?
-                    location.map((number) => {
-                      return genTags(number);
-                    })
-                  : null}
-                </View>
+              <View style={{flexDirection: 'row',}}>
+                {Array.isArray(location) ?
+                  location.map((tag) => (
+                    <TouchableOpacity 
+                      style={styles.buttonTag} 
+                      key={tag}
+                      onPress={() => {setLocation(location => location.filter((item, index) => item !== tag));}}
+                    >
+                      <Text style={{}}>{tag}</Text>
+                    </TouchableOpacity>
+                  ))
+                : null}
+              </View>
             </View>
 
             <View style={{flexDirection: 'column', marginLeft: 0}}>
@@ -288,7 +292,8 @@ const HomeScreen = ({route, navigation}) => {
                   style={styles.input}
                   onChangeText={onChangeInputText}
                   onSubmitEditing={() => {
-                    setLocation(prevArray => [... prevArray, inputText]);
+                    if (location.length < 3) 
+                      setLocation(prevArray => [... prevArray, inputText]);
                     onChangeInputText("");
                   }}
                   value={inputText}
