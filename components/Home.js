@@ -499,7 +499,12 @@ const HomeScreen = ({route, navigation}) => {
             <Text style={styles.textDetail}>Price: $20-$30</Text>
             <Text style={styles.textDetail}>Phone: (560) 140-8610</Text>
             <TouchableOpacity
-              onPress={() => setReviewPage(!reviewPage)}
+              onPress={() => {
+                navigation.navigate('Review', {
+                  userId,
+                  googlePlaceId: mapState.places[cardID].id,
+                });
+              }}
               style={[
                 styles.signIn,
                 {

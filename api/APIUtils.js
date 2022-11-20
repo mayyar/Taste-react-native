@@ -44,3 +44,21 @@ export async function createUser(username, password, country, flavor) {
     });
     return userId;
 }
+
+export function createRating(userId, placeId, rating) {
+  const apiUrl = baseUrl + `ratings`;
+  fetch(apiUrl, {
+    method: 'POST',
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      userId: userId + '',
+      googlePlaceId: placeId,
+      rating: rating
+    })
+  })
+    .then(res => res.json())
+    .then(json => console.log('Created rating: ' + json.rating + ', googlePlaceId: ' + json.googlePlaceId));
+}
