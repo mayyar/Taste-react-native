@@ -1,10 +1,12 @@
 import React, {useState} from 'react';
 import {View, StyleSheet, Text, TouchableOpacity, TextInput, Dimensions,} from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import {createRating} from '../api/APIUtils';
 
 const {width, height} = Dimensions.get('window');
 
-const ReviewPage = props => {
+const ReviewPage = ({route, navigation: { goBack }}) => {
+  const {userId, googlePlaceId} = route.params;
   const [flavors, setFlavors] = useState([]);
   const [inputText, onChangeInputText] = useState("");
 
@@ -66,14 +68,17 @@ const ReviewPage = props => {
         <View style={styles.formButton}>
           <TouchableOpacity
             style={styles.filterButton}
-            onPress={() => props.onChangeValue(false)}>
+            onPress={() => goBack()}
+            >
             <Text style={styles.textFilter}>Cancel</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.filterButton}
             onPress={() => {
-              props.onChangeValue(false);
+              // TODO(JIM): get rating value (change the 4 value)
+              createRating(userId, googlePlaceId, 3);
               console.log(inputText);
+              goBack();
             }}
           >
             <Text style={styles.textFilter}>Submit</Text>
