@@ -8,6 +8,7 @@ import {
   Dimensions,
   Image,
   TouchableOpacity,
+  Linking,
 } from 'react-native';
 import MapView, {Marker, PROVIDER_GOOGLE} from 'react-native-maps';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -47,6 +48,28 @@ const HomeScreen = ({route, navigation}) => {
   const [reviewPage, setReviewPage] = useState(false);
   const [inputText, onChangeInputText] = useState("");
   const [location, setLocation] = useState([]);
+
+  const OpenURLButton = ({url, children}) => {
+    const handlePress = React.useCallback(async () => {
+      // Checking if the link is supported for links with custom URL scheme.
+      const supported = await Linking.canOpenURL(url);
+  
+      if (supported) {
+        // Opening the link with some app, if the URL scheme is "http" the web link should be opened
+        // by some browser in the mobile
+        await Linking.openURL(url);
+      } 
+      else {
+        Alert.alert(`Don't know how to open this URL: ${url}`);
+      }
+    }, [url]);
+  
+    return (
+      <TouchableOpacity onPress={handlePress}>
+        <Text style={styles.urlButtonText}>{`${children}`}</Text>
+      </TouchableOpacity>
+    );
+  };
 
   function getFilterResults(keyword) {
     Promise.all([getPlaces(keyword)]).then(responses => {
@@ -441,63 +464,72 @@ const HomeScreen = ({route, navigation}) => {
       ) : null}
 
       {detail ? (
-        <View style={styles.container}>
-          <View
-            style={{
-              backgroundColor: 'white',
-              flex: 1,
-              alignItems: 'flex-start',
-            }}></View>
-          <View
-            style={{
-              backgroundColor: 'white',
-              flex: 1,
-              justifyContent: 'flex-start',
-              alignItems: 'flex-start',
-              padding: 10,
-            }}>
+        <View style={[styles.container, {justifyContent: 'flex-start',}]}>
+          
+          <View style={[styles.detailContainer, {flex: 1,}]}>
             <TouchableOpacity onPress={() => setDetail(!detail)}>
-              <Text
-                style={[
-                  styles.textSign,
-                  {
-                    color: 'green',
-                  },
-                ]}>
+              <Text style={[styles.textSign, {color: 'green',}]}>
                 X
               </Text>
             </TouchableOpacity>
           </View>
-          <View
-            style={{
-              backgroundColor: 'white',
-              flex: 18,
-              justifyContent: 'flex-start',
-              alignItems: 'center',
-              padding: 10,
-            }}>
+          
+          <View style={[styles.detailContainer, {flex: 10, justifyContent: 'center', alignItems: 'center',}]}>
             <Image
               source={{uri: mapState.places[cardID].photoUrl}}
               style={styles.detailImage}
               resizeMode="cover"
             />
-            <Text
-              style={[
-                styles.textDetail,
-                {
-                  fontWeight: 'bold',
-                },
-              ]}>
+          </View>
+
+          <View style={[styles.detailContainer, {flex: 8,}]}>
+            
+            <Text style={{fontSize: 20, paddingBottom: 10,}}>
               {mapState.places[cardID].name}
             </Text>
-            <Text style={styles.textDetail}>Rating from country: 4.7</Text>
-            <Text style={styles.textDetail}>
-              Average rating: {mapState.places[cardID].rating}
-            </Text>
-            <Text style={styles.textDetail}>Taste: Spicy</Text>
-            <Text style={styles.textDetail}>Opens: Mon-Fri 11:00am-9:00pm</Text>
-            <Text style={styles.textDetail}>Price: $20-$30</Text>
-            <Text style={styles.textDetail}>Phone: (560) 140-8610</Text>
+
+            <View style={styles.detailItemContainer}>
+              <Text style={styles.textDetailTitle}>Rating: </Text>
+              <Text style={styles.textDetail}>{mapState.places[cardID].rating}</Text>
+            </View>
+
+            <View style={styles.detailItemContainer}>
+              <Text style={styles.textDetailTitle}>Rating from selected locations: </Text>
+              <Text style={styles.textDetail}>???</Text>
+            </View>
+
+            <View style={styles.detailItemContainer}>
+              <Text style={styles.textDetailTitle}>Taste: </Text>
+              <Text style={styles.textDetail}>Spicy</Text>
+            </View>
+
+            <View style={styles.detailItemContainer}>
+              <Text style={styles.textDetailTitle}>Address: </Text>
+              <Text style={styles.textDetail}>{mapState.places[cardID].vicinity}</Text>
+            </View>
+
+            <View style={styles.detailItemContainer}>
+              <Text style={styles.textDetailTitle}>Opens: </Text>
+              <Text style={styles.textDetail}>Mon-Fri 11:00am-9:00pm</Text>
+            </View>
+
+            <View style={styles.detailItemContainer}>
+              <Text style={styles.textDetailTitle}>Price: </Text>
+              <Text style={styles.textDetail}>$20-$30</Text>
+            </View>
+
+            <View style={styles.detailItemContainer}>
+              <Text style={styles.textDetailTitle}>Phone: </Text>
+              <OpenURLButton 
+                url={`${Platform.OS === 'ios' ? 'telprompt:' : 'tel:'}${mapState.places[cardID].phone}`}
+              >
+                {`${mapState.places[cardID].phone}`}
+              </OpenURLButton>
+            </View>
+
+          </View>
+
+          <View style={[styles.detailContainer, {flex: 4, alignItems: 'flex-start', justifyContent: 'space-around', flexDirection: 'row',}]}>
             <TouchableOpacity
               onPress={() => {
                 navigation.navigate('Review', {
@@ -505,24 +537,13 @@ const HomeScreen = ({route, navigation}) => {
                   googlePlaceId: mapState.places[cardID].id,
                 });
               }}
-              style={[
-                styles.signIn,
-                {
-                  borderColor: 'green',
-                  borderWidth: 1,
-                },
-              ]}>
-              <Text
-                style={[
-                  styles.textSign,
-                  {
-                    color: 'green',
-                  },
-                ]}>
+              style={styles.borderButton}
+            >
+              <Text style={styles.borderButtonText}>
                 Write a Review
               </Text>
             </TouchableOpacity>
-            <View style={{flex: 0.01}} />
+
             <TouchableOpacity
               onPress={() => {
                 navigation.navigate('Navigation', {
@@ -530,24 +551,14 @@ const HomeScreen = ({route, navigation}) => {
                   destination: mapState.places[cardID].latlng,
                 });
               }}
-              style={[
-                styles.signIn,
-                {
-                  borderColor: 'green',
-                  borderWidth: 1,
-                },
-              ]}>
-              <Text
-                style={[
-                  styles.textSign,
-                  {
-                    color: 'green',
-                  },
-                ]}>
+              style={styles.borderButton}
+            >
+              <Text style={styles.borderButtonText}>
                 Navigation
               </Text>
             </TouchableOpacity>
           </View>
+
         </View>
       ) : null}
 
@@ -682,11 +693,41 @@ const styles = StyleSheet.create({
   check: {
     alignSelf: 'center',
   },
+  borderButton: {
+    padding: 5,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 3,
+    borderColor: 'green',
+    borderWidth: 1,
+  },
+  borderButtonText: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    color: 'green',
+  },
+  detailContainer: {
+    backgroundColor: 'white',
+    justifyContent: 'flex-start',
+    alignItems: 'flex-start',
+    padding: 20,
+  },
+  detailItemContainer: {
+    flexDirection: 'row',
+    paddingVertical: 2,
+  },
+  textDetailTitle: {
+    // color: 'black',
+    fontWeight: 'bold',
+  },
   textDetail: {
-    color: 'black',
+    // color: 'black',
+  },
+  urlButtonText: {
+    color: 'blue',
   },
   detailImage: {
-    flex: 0.6,
+    flex: 1,
     aspectRatio: 1,
     // width: 2,
     // height: ,
