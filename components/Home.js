@@ -18,7 +18,7 @@ import StarRating from './StarRating';
 import ReviewPage from './ReviewPage';
 
 const {width, height} = Dimensions.get('window');
-const CARD_HEIGHT = 250;
+const CARD_HEIGHT = 290;
 const CARD_WIDTH = width * 0.8;
 
 const HomeScreen = ({route, navigation}) => {
@@ -50,7 +50,7 @@ const HomeScreen = ({route, navigation}) => {
   const [inputText, onChangeInputText] = useState("");
   const [location, setLocation] = useState([]);
 
-  const OpenURLButton = ({url, children}) => {
+  const OpenURLButton = ({style, textStyle, url, children}) => {
     const handlePress = React.useCallback(async () => {
       // Checking if the link is supported for links with custom URL scheme.
       const supported = await Linking.canOpenURL(url);
@@ -66,8 +66,8 @@ const HomeScreen = ({route, navigation}) => {
     }, [url]);
   
     return (
-      <TouchableOpacity onPress={handlePress}>
-        <Text style={styles.urlButtonText}>{`${children}`}</Text>
+      <TouchableOpacity onPress={handlePress} style={style}>
+        <Text style={textStyle}>{`${children}`}</Text>
       </TouchableOpacity>
     );
   };
@@ -433,9 +433,14 @@ const HomeScreen = ({route, navigation}) => {
                     numberOfLines={1}
                     style={{fontSize: 11, paddingTop: 2}}>{`Delivery`}</Text>
                 </View>
-                <Text numberOfLines={1} style={styles.cardTitle}>
+
+                <Text numberOfLines={1} style={{fontSize: 11, paddingTop: 2}}>
+                  {`Mon-Fri 11:00am-9:00pm`}
+                </Text>
+
+                <Text numberOfLines={1} style={{fontSize: 11, paddingTop: 2}}>
                   {`Location Rating: ` + marker.locationRating}
-                  </Text>
+                </Text>
 
                 <StarRating
                   ratings={marker.rating}
@@ -495,7 +500,6 @@ const HomeScreen = ({route, navigation}) => {
             <Text style={{fontSize: 20, paddingBottom: 10,}}>
               {mapState.places[cardID].name}
             </Text>
-{/* <<<<<<< HEAD */}
 
             <View style={styles.detailItemContainer}>
               <Text style={styles.textDetailTitle}>Rating: </Text>
@@ -530,6 +534,7 @@ const HomeScreen = ({route, navigation}) => {
             <View style={styles.detailItemContainer}>
               <Text style={styles.textDetailTitle}>Phone: </Text>
               <OpenURLButton 
+                textStyle={styles.urlButtonText}
                 url={`${Platform.OS === 'ios' ? 'telprompt:' : 'tel:'}${mapState.places[cardID].phone}`}
               >
                 {`${mapState.places[cardID].phone}`}
@@ -539,16 +544,6 @@ const HomeScreen = ({route, navigation}) => {
           </View>
 
           <View style={[styles.detailContainer, {flex: 4, alignItems: 'flex-start', justifyContent: 'space-around', flexDirection: 'row',}]}>
-{/* =======
-            <Text style={styles.textDetail}>Rating from country: {mapState.places[cardID].locationRating} </Text>
-            <Text style={styles.textDetail}>
-              Average rating: {mapState.places[cardID].rating}
-            </Text>
-            <Text style={styles.textDetail}>Taste: {mapState.places[cardID].tastePrefString}</Text>
-            <Text style={styles.textDetail}>Opens: Mon-Fri 11:00am-9:00pm</Text>
-            <Text style={styles.textDetail}>Price: $20-$30</Text>
-            <Text style={styles.textDetail}>Phone: (560) 140-8610</Text>
->>>>>>> master */}
             <TouchableOpacity
               onPress={() => {
                 navigation.navigate('Review', {
@@ -576,6 +571,14 @@ const HomeScreen = ({route, navigation}) => {
                 Navigation
               </Text>
             </TouchableOpacity>
+
+            <OpenURLButton
+              style={styles.borderButton} 
+              textStyle={styles.borderButtonText}
+              url={`${Platform.OS === 'ios' ? 'maps:0,0?q='+mapState.places[cardID].name+'@'+mapState.places[cardID].latlng : 'geo:0,0?q='+mapState.places[cardID].latlng+'('+mapState.places[cardID].name+')'}`}
+            >
+              {`Open Maps`}
+            </OpenURLButton>
           </View>
 
         </View>
@@ -594,11 +597,11 @@ const styles = StyleSheet.create({
   },
   searchBox: {
     position: 'absolute',
-    marginTop: Platform.OS === 'ios' ? 50 : 20,
+    marginTop: Platform.OS === 'ios' ? 20 : 20,
     flexDirection: 'row',
     backgroundColor: '#fff',
     width: '90%',
-    height: '5%',
+    // height: '5%',
     alignSelf: 'center',
     borderRadius: 5,
     padding: 10,
