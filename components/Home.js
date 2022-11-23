@@ -8,7 +8,6 @@ import {
   Dimensions,
   Image,
   TouchableOpacity,
-  Linking,
 } from 'react-native';
 import MapView, {Marker, PROVIDER_GOOGLE} from 'react-native-maps';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -16,6 +15,7 @@ import {getPlaces} from '../api/MapAPI';
 import {createUser} from '../api/APIUtils';
 import StarRating from './StarRating';
 import ReviewPage from './ReviewPage';
+import OpenURLButton from './OpenURLButton'
 
 const {width, height} = Dimensions.get('window');
 const CARD_HEIGHT = 290;
@@ -49,28 +49,6 @@ const HomeScreen = ({route, navigation}) => {
   const [reviewPage, setReviewPage] = useState(false);
   const [inputText, onChangeInputText] = useState("");
   const [location, setLocation] = useState([]);
-
-  const OpenURLButton = ({style, textStyle, url, children}) => {
-    const handlePress = React.useCallback(async () => {
-      // Checking if the link is supported for links with custom URL scheme.
-      const supported = await Linking.canOpenURL(url);
-  
-      if (supported) {
-        // Opening the link with some app, if the URL scheme is "http" the web link should be opened
-        // by some browser in the mobile
-        await Linking.openURL(url);
-      } 
-      else {
-        Alert.alert(`Don't know how to open this URL: ${url}`);
-      }
-    }, [url]);
-  
-    return (
-      <TouchableOpacity onPress={handlePress} style={style}>
-        <Text style={textStyle}>{`${children}`}</Text>
-      </TouchableOpacity>
-    );
-  };
 
   function getFilterResults(filterSkip, keyword) {
     Promise.all([getPlaces(filterSkip, keyword, searchCountry, flavors)]).then(responses => {
