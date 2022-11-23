@@ -23,12 +23,31 @@ const ReviewPage = ({route, navigation: { goBack }}) => {
   return (
     <View style={styles.container}>
       <View style={styles.textContent}>
-        <Text style={{fontWeight: 'bold', fontSize: 30, marginBottom: 20}}>
-          Review
+        <Text style={{fontWeight: 'bold', fontSize: 20, marginBottom: 0}}>
+          Write a Review
         </Text>
 
-        <Text style={{fontWeight: 'bold', fontSize: 15, marginBottom: 10}}>
-          Taste
+        <View style={styles.ratings}>
+          <Ionicons name="ios-star-outline" style={styles.star} size={30} />
+          <Ionicons name="ios-star-outline" style={styles.star} size={30} />
+          <Ionicons name="ios-star-outline" style={styles.star} size={30} />
+          <Ionicons name="ios-star-outline" style={styles.star} size={30} />
+          <Ionicons name="ios-star-outline" style={styles.star} size={30} />
+        </View>
+
+        <View style={styles.formButton}>
+          <TextInput
+            style={styles.input}
+            onChangeText={onChangeInputText}
+            value={inputText}
+            placeholder="Type in what you think"
+            multiline={true}
+            numberOfLines={4}
+          />
+        </View>
+
+        <Text style={{fontSize: 14, marginBottom: 10}}>
+          How's the taste of the restaurant?
         </Text>
 
         <View>
@@ -44,25 +63,6 @@ const ReviewPage = ({route, navigation: { goBack }}) => {
               <Text>{option}</Text>
             </View>
           ))}
-        </View>
-
-        <View style={styles.ratings}>
-          <Ionicons name="ios-star-outline" style={styles.star} size={30} />
-          <Ionicons name="ios-star-outline" style={styles.star} size={30} />
-          <Ionicons name="ios-star-outline" style={styles.star} size={30} />
-          <Ionicons name="ios-star-outline" style={styles.star} size={30} />
-          <Ionicons name="ios-star-outline" style={styles.star} size={30} />
-        </View>
-
-        <View style={styles.formButton}>
-          <TextInput
-            style={styles.input}
-            onChangeText={onChangeInputText}
-            value={inputText}
-            placeholder="Type in what you think about the restaurant"
-            multiline={true}
-            numberOfLines={4}
-          />
         </View>
 
         <View style={styles.formButton}>
@@ -96,7 +96,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     marginTop: Platform.OS === 'ios' ? 100 : 40,
     width: '75%',
-    height: '60%',
+    height: 450,
     backgroundColor: '#fff',
     padding: 10,
     borderRadius: 5,
