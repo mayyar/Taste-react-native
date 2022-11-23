@@ -15,9 +15,10 @@ import {getPlaces} from '../api/MapAPI';
 import {createUser} from '../api/APIUtils';
 import StarRating from './StarRating';
 import ReviewPage from './ReviewPage';
+import OpenURLButton from './OpenURLButton'
 
 const {width, height} = Dimensions.get('window');
-const CARD_HEIGHT = 250;
+const CARD_HEIGHT = 290;
 const CARD_WIDTH = width * 0.8;
 
 const HomeScreen = ({route, navigation}) => {
@@ -90,6 +91,9 @@ const HomeScreen = ({route, navigation}) => {
           autoCapitalize="none"
           onChangeText={newText => setSearchRestaurant(newText)}
           style={{flex: 1, padding: 0}}
+          onSubmitEditing={() => {
+            getFilterResults(searchRestaurant);
+          }}
         />
         <TouchableOpacity onPress={() => setFilter(!filter)}>
           <Ionicons name="ios-search" size={20} />
@@ -407,9 +411,14 @@ const HomeScreen = ({route, navigation}) => {
                     numberOfLines={1}
                     style={{fontSize: 11, paddingTop: 2}}>{`Delivery`}</Text>
                 </View>
-                <Text numberOfLines={1} style={styles.cardTitle}>
+
+                <Text numberOfLines={1} style={{fontSize: 11, paddingTop: 2}}>
+                  {`Mon-Fri 11:00am-9:00pm`}
+                </Text>
+
+                <Text numberOfLines={1} style={{fontSize: 11, paddingTop: 2}}>
                   {`Location Rating: ` + marker.locationRating}
-                  </Text>
+                </Text>
 
                 <StarRating
                   ratings={marker.rating}
@@ -446,63 +455,73 @@ const HomeScreen = ({route, navigation}) => {
       ) : null}
 
       {detail ? (
-        <View style={styles.container}>
-          <View
-            style={{
-              backgroundColor: 'white',
-              flex: 1,
-              alignItems: 'flex-start',
-            }}></View>
-          <View
-            style={{
-              backgroundColor: 'white',
-              flex: 1,
-              justifyContent: 'flex-start',
-              alignItems: 'flex-start',
-              padding: 10,
-            }}>
+        <View style={[styles.container, {justifyContent: 'flex-start',}]}>
+          
+          <View style={[styles.detailContainer, {flex: 1,}]}>
             <TouchableOpacity onPress={() => setDetail(!detail)}>
-              <Text
-                style={[
-                  styles.textSign,
-                  {
-                    color: 'green',
-                  },
-                ]}>
+              <Text style={[styles.textSign, {color: 'green',}]}>
                 X
               </Text>
             </TouchableOpacity>
           </View>
-          <View
-            style={{
-              backgroundColor: 'white',
-              flex: 18,
-              justifyContent: 'flex-start',
-              alignItems: 'center',
-              padding: 10,
-            }}>
+          
+          <View style={[styles.detailContainer, {flex: 10, justifyContent: 'center', alignItems: 'center',}]}>
             <Image
               source={{uri: mapState.places[cardID].photoUrl}}
               style={styles.detailImage}
               resizeMode="cover"
             />
-            <Text
-              style={[
-                styles.textDetail,
-                {
-                  fontWeight: 'bold',
-                },
-              ]}>
+          </View>
+
+          <View style={[styles.detailContainer, {flex: 8,}]}>
+            
+            <Text style={{fontSize: 20, paddingBottom: 10,}}>
               {mapState.places[cardID].name}
             </Text>
-            <Text style={styles.textDetail}>Rating from country: {mapState.places[cardID].locationRating} </Text>
-            <Text style={styles.textDetail}>
-              Average rating: {mapState.places[cardID].rating}
-            </Text>
-            <Text style={styles.textDetail}>Taste: {mapState.places[cardID].tastePrefString}</Text>
-            <Text style={styles.textDetail}>Opens: Mon-Fri 11:00am-9:00pm</Text>
-            <Text style={styles.textDetail}>Price: $20-$30</Text>
-            <Text style={styles.textDetail}>Phone: (560) 140-8610</Text>
+
+            <View style={styles.detailItemContainer}>
+              <Text style={styles.textDetailTitle}>Rating: </Text>
+              <Text style={styles.textDetail}>{mapState.places[cardID].rating}</Text>
+            </View>
+
+            <View style={styles.detailItemContainer}>
+              <Text style={styles.textDetailTitle}>Location rating: </Text>
+              <Text style={styles.textDetail}>{mapState.places[cardID].locationRating}</Text>
+            </View>
+
+            <View style={styles.detailItemContainer}>
+              <Text style={styles.textDetailTitle}>Taste: </Text>
+              <Text style={styles.textDetail}>{mapState.places[cardID].tastePrefString}</Text>
+            </View>
+
+            <View style={styles.detailItemContainer}>
+              <Text style={styles.textDetailTitle}>Address: </Text>
+              <Text style={styles.textDetail}>{mapState.places[cardID].vicinity}</Text>
+            </View>
+
+            <View style={styles.detailItemContainer}>
+              <Text style={styles.textDetailTitle}>Opens: </Text>
+              <Text style={styles.textDetail}>Mon-Fri 11:00am-9:00pm</Text>
+            </View>
+
+            <View style={styles.detailItemContainer}>
+              <Text style={styles.textDetailTitle}>Price: </Text>
+              <Text style={styles.textDetail}>$20-$30</Text>
+            </View>
+
+            <View style={styles.detailItemContainer}>
+              <Text style={styles.textDetailTitle}>Phone: </Text>
+              <OpenURLButton 
+                textStyle={styles.urlButtonText}
+                url={`${Platform.OS === 'ios' ? 'telprompt:' : 'tel:'}${mapState.places[cardID].phone}`}
+              >
+                {`${mapState.places[cardID].phone}`}
+              </OpenURLButton>
+            </View>
+
+          </View>
+
+          <View style={[styles.detailContainer, {flex: 4, alignItems: 'flex-start', justifyContent: 'space-around', flexDirection: 'row',}]}>
             <TouchableOpacity
               onPress={() => {
                 navigation.navigate('Review', {
@@ -510,24 +529,13 @@ const HomeScreen = ({route, navigation}) => {
                   googlePlaceId: mapState.places[cardID].id,
                 });
               }}
-              style={[
-                styles.signIn,
-                {
-                  borderColor: 'green',
-                  borderWidth: 1,
-                },
-              ]}>
-              <Text
-                style={[
-                  styles.textSign,
-                  {
-                    color: 'green',
-                  },
-                ]}>
+              style={styles.borderButton}
+            >
+              <Text style={styles.borderButtonText}>
                 Write a Review
               </Text>
             </TouchableOpacity>
-            <View style={{flex: 0.01}} />
+
             <TouchableOpacity
               onPress={() => {
                 navigation.navigate('Navigation', {
@@ -535,24 +543,22 @@ const HomeScreen = ({route, navigation}) => {
                   destination: mapState.places[cardID].latlng,
                 });
               }}
-              style={[
-                styles.signIn,
-                {
-                  borderColor: 'green',
-                  borderWidth: 1,
-                },
-              ]}>
-              <Text
-                style={[
-                  styles.textSign,
-                  {
-                    color: 'green',
-                  },
-                ]}>
+              style={styles.borderButton}
+            >
+              <Text style={styles.borderButtonText}>
                 Navigation
               </Text>
             </TouchableOpacity>
+
+            <OpenURLButton
+              style={styles.borderButton} 
+              textStyle={styles.borderButtonText}
+              url={`${Platform.OS === 'ios' ? 'maps:0,0?q='+mapState.places[cardID].name+'@'+mapState.places[cardID].latlng : 'geo:0,0?q='+mapState.places[cardID].latlng+'('+mapState.places[cardID].name+')'}`}
+            >
+              {`Open Maps`}
+            </OpenURLButton>
           </View>
+
         </View>
       ) : null}
 
@@ -569,11 +575,11 @@ const styles = StyleSheet.create({
   },
   searchBox: {
     position: 'absolute',
-    marginTop: Platform.OS === 'ios' ? 50 : 20,
+    marginTop: Platform.OS === 'ios' ? 20 : 20,
     flexDirection: 'row',
     backgroundColor: '#fff',
     width: '90%',
-    height: '5%',
+    // height: '5%',
     alignSelf: 'center',
     borderRadius: 5,
     padding: 10,
@@ -687,11 +693,41 @@ const styles = StyleSheet.create({
   check: {
     alignSelf: 'center',
   },
+  borderButton: {
+    padding: 5,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 3,
+    borderColor: 'green',
+    borderWidth: 1,
+  },
+  borderButtonText: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    color: 'green',
+  },
+  detailContainer: {
+    backgroundColor: 'white',
+    justifyContent: 'flex-start',
+    alignItems: 'flex-start',
+    padding: 20,
+  },
+  detailItemContainer: {
+    flexDirection: 'row',
+    paddingVertical: 2,
+  },
+  textDetailTitle: {
+    // color: 'black',
+    fontWeight: 'bold',
+  },
   textDetail: {
-    color: 'black',
+    // color: 'black',
+  },
+  urlButtonText: {
+    color: 'blue',
   },
   detailImage: {
-    flex: 0.6,
+    flex: 1,
     aspectRatio: 1,
     // width: 2,
     // height: ,
