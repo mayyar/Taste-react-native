@@ -18,7 +18,7 @@ import StarRating from './StarRating';
 import ReviewPage from './ReviewPage';
 
 const {width, height} = Dimensions.get('window');
-const CARD_HEIGHT = 220;
+const CARD_HEIGHT = 250;
 const CARD_WIDTH = width * 0.8;
 
 const HomeScreen = ({route, navigation}) => {
@@ -35,6 +35,7 @@ const HomeScreen = ({route, navigation}) => {
   };
   const [userAccountState, setUserAccountState] = useState(initUserAccountState);
   const [searchRestaurant, setSearchRestaurant] = useState("Restaurant");
+  const [searchCountry, setSearchCountry] = useState('');
   const [mapState, setMapState] = useState(initMapState);
   const [userId, setUserId] = useState(-1);
   const [filter, setFilter] = useState(false);
@@ -71,8 +72,8 @@ const HomeScreen = ({route, navigation}) => {
     );
   };
 
-  function getFilterResults(keyword) {
-    Promise.all([getPlaces(keyword)]).then(responses => {
+  function getFilterResults(filterSkip, keyword) {
+    Promise.all([getPlaces(filterSkip, keyword, searchCountry, flavors)]).then(responses => {
       setMapState(responses[0]);
     });
   }
@@ -112,6 +113,9 @@ const HomeScreen = ({route, navigation}) => {
           autoCapitalize="none"
           onChangeText={newText => setSearchRestaurant(newText)}
           style={{flex: 1, padding: 0}}
+          onSubmitEditing={() => {
+            getFilterResults(searchRestaurant);
+          }}
         />
         <TouchableOpacity onPress={() => setFilter(!filter)}>
           <Ionicons name="ios-search" size={20} />
@@ -338,6 +342,7 @@ const HomeScreen = ({route, navigation}) => {
                     if (location.length < 3) 
                       setLocation(prevArray => [... prevArray, inputText]);
                     onChangeInputText("");
+                    setSearchCountry(inputText);
                   }}
                   value={inputText}
                   placeholder="Press enter to add"
@@ -365,7 +370,7 @@ const HomeScreen = ({route, navigation}) => {
               <TouchableOpacity
                 style={styles.filterButton}
                 onPress={() => {
-                  getFilterResults(searchRestaurant);
+                  getFilterResults(true, searchRestaurant);
                   setFilter(!filter);
                   setSubmit(!submit);
                 }}>
@@ -374,7 +379,7 @@ const HomeScreen = ({route, navigation}) => {
               <TouchableOpacity
                 style={styles.filterButton}
                 onPress={() => {
-                  getFilterResults(searchRestaurant);
+                  getFilterResults(false, searchRestaurant);
                   setFilter(!filter);
                   setSubmit(!submit);
                 }}>
@@ -428,6 +433,9 @@ const HomeScreen = ({route, navigation}) => {
                     numberOfLines={1}
                     style={{fontSize: 11, paddingTop: 2}}>{`Delivery`}</Text>
                 </View>
+                <Text numberOfLines={1} style={styles.cardTitle}>
+                  {`Location Rating: ` + marker.locationRating}
+                  </Text>
 
                 <StarRating
                   ratings={marker.rating}
@@ -487,6 +495,7 @@ const HomeScreen = ({route, navigation}) => {
             <Text style={{fontSize: 20, paddingBottom: 10,}}>
               {mapState.places[cardID].name}
             </Text>
+{/* <<<<<<< HEAD */}
 
             <View style={styles.detailItemContainer}>
               <Text style={styles.textDetailTitle}>Rating: </Text>
@@ -494,13 +503,13 @@ const HomeScreen = ({route, navigation}) => {
             </View>
 
             <View style={styles.detailItemContainer}>
-              <Text style={styles.textDetailTitle}>Rating from selected locations: </Text>
-              <Text style={styles.textDetail}>???</Text>
+              <Text style={styles.textDetailTitle}>Location rating: </Text>
+              <Text style={styles.textDetail}>{mapState.places[cardID].locationRating}</Text>
             </View>
 
             <View style={styles.detailItemContainer}>
               <Text style={styles.textDetailTitle}>Taste: </Text>
-              <Text style={styles.textDetail}>Spicy</Text>
+              <Text style={styles.textDetail}>{mapState.places[cardID].tastePrefString}</Text>
             </View>
 
             <View style={styles.detailItemContainer}>
@@ -530,6 +539,16 @@ const HomeScreen = ({route, navigation}) => {
           </View>
 
           <View style={[styles.detailContainer, {flex: 4, alignItems: 'flex-start', justifyContent: 'space-around', flexDirection: 'row',}]}>
+{/* =======
+            <Text style={styles.textDetail}>Rating from country: {mapState.places[cardID].locationRating} </Text>
+            <Text style={styles.textDetail}>
+              Average rating: {mapState.places[cardID].rating}
+            </Text>
+            <Text style={styles.textDetail}>Taste: {mapState.places[cardID].tastePrefString}</Text>
+            <Text style={styles.textDetail}>Opens: Mon-Fri 11:00am-9:00pm</Text>
+            <Text style={styles.textDetail}>Price: $20-$30</Text>
+            <Text style={styles.textDetail}>Phone: (560) 140-8610</Text>
+>>>>>>> master */}
             <TouchableOpacity
               onPress={() => {
                 navigation.navigate('Review', {
