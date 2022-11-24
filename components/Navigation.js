@@ -2,10 +2,12 @@ import React from 'react';
 import {View, StyleSheet} from 'react-native';
 import MapView, {PROVIDER_GOOGLE} from 'react-native-maps';
 import MapViewDirections from 'react-native-maps-directions';
+import Config from 'react-native-config';
 
 const NavigationScreen = ({route, navigation}) => {
   const {origin, destination} = route.params;
-  const GOOGLE_MAPS_APIKEY = 'AIzaSyAknkMCF_NtwGapqISj2lsi3EsoG8l8lJc';
+  const GOOGLE_MAPS_APIKEY = Config.REACT_APP_API_KEY;
+  console.log('Key in Navigation: ', GOOGLE_MAPS_APIKEY);
 
   return (
     <View style={styles.container}>

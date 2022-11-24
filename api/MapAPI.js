@@ -1,5 +1,6 @@
 import Geolocation from '@react-native-community/geolocation';
 import {getRatingsByPref} from '../api/APIUtils';
+import Config from 'react-native-config';
 
 export function getCurrentLocation() {
   return new Promise((resolve, reject) =>
@@ -16,7 +17,8 @@ function getPlacesUrl(keyword, lat, long, radius, type, apiKey) {
 }
 
 export async function getPlaces(filterSkip, keyword, searchCountry, flavors) {
-  const apiKey = 'AIzaSyAknkMCF_NtwGapqISj2lsi3EsoG8l8lJc';
+  const apiKey = Config.REACT_APP_API_KEY;
+  console.log('Key in MapAPI: ', apiKey);
   let position = await getCurrentLocation(),
     {coords} = position;
   const markers = [];
@@ -29,8 +31,8 @@ export async function getPlaces(filterSkip, keyword, searchCountry, flavors) {
     'restaurant',
     apiKey,
   );
-  let googlePlaceIds = []
-  let placeIdToMarker = {}
+  let googlePlaceIds = [];
+  let placeIdToMarker = {};
   await fetch(url)
     .then(res => res.json())
     .then(res => {
@@ -62,18 +64,25 @@ export async function getPlaces(filterSkip, keyword, searchCountry, flavors) {
   if (filterSkip) {
     state.places = markersSkip;
   } else {
-    let ratingsByPref = await getRatingsByPref(googlePlaceIds, searchCountry, flavors);
+    let ratingsByPref = await getRatingsByPref(
+      googlePlaceIds,
+      searchCountry,
+      flavors,
+    );
     for (let i = 0; i < ratingsByPref.length; i++) {
       let ratingByPref = ratingsByPref[i];
-      placeIdToMarker[ratingByPref.googlePlaceId].locationRating = ratingByPref.rating;
-      placeIdToMarker[ratingByPref.googlePlaceId].country = ratingByPref.country;
+      placeIdToMarker[ratingByPref.googlePlaceId].locationRating =
+        ratingByPref.rating;
+      placeIdToMarker[ratingByPref.googlePlaceId].country =
+        ratingByPref.country;
       let tastePrefString = '';
       for (const [taste, value] of Object.entries(ratingByPref.tastePref)) {
         if (value == 1) {
-          tastePrefString += (taste + ' ')
+          tastePrefString += taste + ' ';
         }
       }
-      placeIdToMarker[ratingByPref.googlePlaceId].tastePrefString = tastePrefString;
+      placeIdToMarker[ratingByPref.googlePlaceId].tastePrefString =
+        tastePrefString;
       markers.push(placeIdToMarker[ratingByPref.googlePlaceId]);
     }
     state.places = markers;

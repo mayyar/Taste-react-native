@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   View,
   StyleSheet,
@@ -15,7 +15,10 @@ import {getPlaces} from '../api/MapAPI';
 import {createUser} from '../api/APIUtils';
 import StarRating from './StarRating';
 import ReviewPage from './ReviewPage';
-import OpenURLButton from './OpenURLButton'
+import OpenURLButton from './OpenURLButton';
+import {Platform, PermissionsAndroid} from 'react-native';
+
+import Geolocation from 'react-native-geolocation-service';
 
 const {width, height} = Dimensions.get('window');
 const CARD_HEIGHT = 290;
@@ -28,13 +31,14 @@ const HomeScreen = ({route, navigation}) => {
     places: [],
   };
   const initUserAccountState = {
-    username: "",
-    password: "",
-    country: "",
+    username: '',
+    password: '',
+    country: '',
     tastePref: [],
   };
-  const [userAccountState, setUserAccountState] = useState(initUserAccountState);
-  const [searchRestaurant, setSearchRestaurant] = useState("Restaurant");
+  const [userAccountState, setUserAccountState] =
+    useState(initUserAccountState);
+  const [searchRestaurant, setSearchRestaurant] = useState('Restaurant');
   const [searchCountry, setSearchCountry] = useState('');
   const [mapState, setMapState] = useState(initMapState);
   const [userId, setUserId] = useState(-1);
@@ -47,13 +51,33 @@ const HomeScreen = ({route, navigation}) => {
   const [register, setRegister] = useState(true);
   const [background, setBackground] = useState(false);
   const [reviewPage, setReviewPage] = useState(false);
-  const [inputText, onChangeInputText] = useState("");
+  const [inputText, onChangeInputText] = useState('');
   const [location, setLocation] = useState([]);
 
+  // useEffect(() => {
+  //   async function requestPermissions() {
+  //     if (Platform.OS === 'ios') {
+  //       Geolocation.requestAuthorization();
+  //       Geolocation.setRNConfiguration({
+  //         skipPermissionRequests: false,
+  //         authorizationLevel: 'whenInUse',
+  //       });
+  //     }
+
+  //     if (Platform.OS === 'android') {
+  //       await PermissionsAndroid.request(
+  //         PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+  //       );
+  //     }
+  //   }
+  // });
+
   function getFilterResults(filterSkip, keyword) {
-    Promise.all([getPlaces(filterSkip, keyword, searchCountry, flavors)]).then(responses => {
-      setMapState(responses[0]);
-    });
+    Promise.all([getPlaces(filterSkip, keyword, searchCountry, flavors)]).then(
+      responses => {
+        setMapState(responses[0]);
+      },
+    );
   }
 
   function pickFlavor(selectedFlavor) {
@@ -96,235 +120,266 @@ const HomeScreen = ({route, navigation}) => {
           }}
         />
         <TouchableOpacity onPress={() => setFilter(!filter)}>
-          <Ionicons name="ios-search" size={20} />
+          <Ionicons name="search" size={20} />
         </TouchableOpacity>
       </View>
 
       {register ? (
-        <View style={[styles.container, {backgroundColor: 'white', flex: 19, justifyContent: 'flex-start', alignItems: 'flex-start', padding: 10}]}>
-            <View style={{flexDirection: 'row', margin: 10,}}>
-              <Text style={{fontWeight: 'bold', fontSize: 15}}>
-                Register
-              </Text>
-            </View>
+        <View
+          style={[
+            styles.container,
+            {
+              backgroundColor: 'white',
+              flex: 19,
+              justifyContent: 'flex-start',
+              alignItems: 'flex-start',
+              padding: 10,
+            },
+          ]}>
+          <View style={{flexDirection: 'row', margin: 10}}>
+            <Text style={{fontWeight: 'bold', fontSize: 15}}>Register</Text>
+          </View>
 
-            <View style={{flexDirection: 'row', margin: 10,}}>
-              <Text>* Required</Text>
-            </View>
+          <View style={{flexDirection: 'row', margin: 10}}>
+            <Text>* Required</Text>
+          </View>
 
-            <View style={{flexDirection: 'row', margin: 10,}}>
-              <Text>Username * </Text>
-              <TextInput
-                placeholder=""
-                placeholderTextColor="#000"
-                autoCapitalize="none"
-                onChangeText={newText => userAccountState.username = newText}
-                style={{
-                  flex: 1,
-                  padding: 0,
-                  marginLeft: 5,
-                  borderBottomColor: '#000',
-                  borderBottomWidth: 1,
-                }}
-              />
-            </View>
+          <View style={{flexDirection: 'row', margin: 10}}>
+            <Text>Username * </Text>
+            <TextInput
+              placeholder=""
+              placeholderTextColor="#000"
+              autoCapitalize="none"
+              onChangeText={newText => (userAccountState.username = newText)}
+              style={{
+                flex: 1,
+                padding: 0,
+                marginLeft: 5,
+                borderBottomColor: '#000',
+                borderBottomWidth: 1,
+              }}
+            />
+          </View>
 
-            <View style={{flexDirection: 'row', margin: 10,}}>
-              <Text>Passward * </Text>
-              <TextInput
-                placeholder=""
-                placeholderTextColor="#000"
-                autoCapitalize="none"
-                onChangeText={newText => userAccountState.password = newText}
-                style={{
-                  flex: 1,
-                  padding: 0,
-                  marginLeft: 5,
-                  borderBottomColor: '#000',
-                  borderBottomWidth: 1,
-                }}
-              />
-            </View>
+          <View style={{flexDirection: 'row', margin: 10}}>
+            <Text>Passward * </Text>
+            <TextInput
+              placeholder=""
+              placeholderTextColor="#000"
+              autoCapitalize="none"
+              onChangeText={newText => (userAccountState.password = newText)}
+              style={{
+                flex: 1,
+                padding: 0,
+                marginLeft: 5,
+                borderBottomColor: '#000',
+                borderBottomWidth: 1,
+              }}
+            />
+          </View>
 
-            <View style={{flexDirection: 'row', margin: 10,}}>
-              <Text>Re-enter Passward * </Text>
-              <TextInput
-                placeholder=""
-                placeholderTextColor="#000"
-                autoCapitalize="none"
-                style={{
-                  flex: 1,
-                  padding: 0,
-                  marginLeft: 5,
-                  borderBottomColor: '#000',
-                  borderBottomWidth: 1,
-                }}
-              />
-            </View>
+          <View style={{flexDirection: 'row', margin: 10}}>
+            <Text>Re-enter Passward * </Text>
+            <TextInput
+              placeholder=""
+              placeholderTextColor="#000"
+              autoCapitalize="none"
+              style={{
+                flex: 1,
+                padding: 0,
+                marginLeft: 5,
+                borderBottomColor: '#000',
+                borderBottomWidth: 1,
+              }}
+            />
+          </View>
 
-            <TouchableOpacity
-              onPress={() => {
-                setRegister(!register); 
-                setBackground(!background);
+          <TouchableOpacity
+            onPress={() => {
+              setRegister(!register);
+              setBackground(!background);
             }}
+            style={[
+              styles.signIn,
+              {
+                borderColor: 'green',
+                borderWidth: 1,
+              },
+            ]}>
+            <Text
               style={[
-                styles.signIn,
+                styles.textSign,
                 {
-                  borderColor: 'green',
-                  borderWidth: 1,
+                  color: 'green',
                 },
               ]}>
-              <Text
-                style={[
-                  styles.textSign,
-                  {
-                    color: 'green',
-                  },
-                ]}>
-                Sign Up
-              </Text>
-            </TouchableOpacity>
-          </View>
+              Sign Up
+            </Text>
+          </TouchableOpacity>
+        </View>
       ) : null}
 
       {background ? (
-        <View style={[styles.container, {backgroundColor: 'white', flex: 19, justifyContent: 'flex-start', alignItems: 'flex-start', padding: 10}]}>  
-            <View style={{flexDirection: 'row', margin: 10,}}>
-              <Text style={{fontWeight: 'bold', fontSize: 15}}>
-                Background
-              </Text>
-            </View>
+        <View
+          style={[
+            styles.container,
+            {
+              backgroundColor: 'white',
+              flex: 19,
+              justifyContent: 'flex-start',
+              alignItems: 'flex-start',
+              padding: 10,
+            },
+          ]}>
+          <View style={{flexDirection: 'row', margin: 10}}>
+            <Text style={{fontWeight: 'bold', fontSize: 15}}>Background</Text>
+          </View>
 
-            <View style={{flexDirection: 'row', marginLeft: 10,  marginBottom: 10,}}>
-              <Text>* Required</Text>
-            </View>
+          <View
+            style={{flexDirection: 'row', marginLeft: 10, marginBottom: 10}}>
+            <Text>* Required</Text>
+          </View>
 
-            <View style={{flexDirection: 'row', marginLeft: 10,  marginBottom: 10,}}>
-                <Text>In order to make your ratings more meaningful, we invite you to provide the following information:</Text>
-            </View>
+          <View
+            style={{flexDirection: 'row', marginLeft: 10, marginBottom: 10}}>
+            <Text>
+              In order to make your ratings more meaningful, we invite you to
+              provide the following information:
+            </Text>
+          </View>
 
-            <View style={{flexDirection: 'row', marginLeft: 10,}}>
-                <Text>Location *{"\n"}</Text>
-            </View>
+          <View style={{flexDirection: 'row', marginLeft: 10}}>
+            <Text>Location *{'\n'}</Text>
+          </View>
 
-            <View style={{flexDirection: 'column', marginLeft: 10}}>
-                <View style={{flexDirection: 'row',}}>
-                  {Array.isArray(location) ?
-                    location.map((tag) => (
-                      <TouchableOpacity 
-                        style={styles.buttonTag} 
-                        key={tag}
-                        onPress={() => {setLocation(location => location.filter((item, index) => item !== tag));}}
-                      >
-                        <Text style={{}}>{tag}</Text>
-                      </TouchableOpacity>
-                    ))
-                  : null}
-                </View>
-            </View>
-
-            <View style={{flexDirection: 'column', marginLeft: 10}}>
-                <TextInput
-                  style={styles.input}
-                  onChangeText={onChangeInputText}
-                  onSubmitEditing={() => {
-                    if (location.length < 3) 
-                      setLocation(prevArray => [... prevArray, inputText]);
-                    onChangeInputText("");
-                    userAccountState.country = inputText;
-                  }}
-                  value={inputText}
-                  placeholder="Press enter to add"
-                />
-            </View>
-
-            <View style={{flexDirection: 'row', marginLeft: 10, marginTop:10,}}>
-                <Text>Taste preference * </Text>
-            </View>
-
-            <View style={{flexDirection: 'column', margin: 10}}>
-            {options.map((option, index) => (
-                <View key={index} style={styles.flavor}>
-                <TouchableOpacity
-                    style={styles.checkbox}
-                    onPress={() => pickFlavor(option)}>
-                    {flavors.includes(option) && (
-                    <Text style={styles.check}>𐄂</Text>
-                    )}
-                </TouchableOpacity>
-                <Text>{option}</Text>
-                </View>
-            ))}
-            </View>
-
-            <TouchableOpacity
-              onPress={() => {
-                userAccountState.tastePref = flavors;
-                const { username, password, country, tastePref} = userAccountState;
-                Promise.all([createUser(username, password, country, tastePref)]).then(responses => {
-                  setUserId(responses[0]);
-                });
-
-                setBackground(!background);
-              }}
-              style={[
-                styles.signIn,
-                {
-                  borderColor: 'green',
-                  borderWidth: 1,
-                },
-              ]}>
-              <Text
-                style={[
-                  styles.textSign,
-                  {
-                    color: 'green',
-                  },
-                ]}>
-                Submit
-              </Text>
-            </TouchableOpacity>
-        </View>
-      ) : null }
-
-      {filter ? (
-        <View style={styles.formContainer}>
-          <View style={styles.textContent}>
-            <View style={{flexDirection: 'row', marginBottom: 10,}}>
-              <Text>Search certain reviews you like.</Text>
-            </View>
-
-            <Text style={{fontWeight: 'bold', fontSize: 12, paddingBottom: 12,}}>Location preference Filter</Text>
-
-            <View style={{flexDirection: 'column', marginLeft: 0}}>
-              <View style={{flexDirection: 'row',}}>
-                {Array.isArray(location) ?
-                  location.map((tag) => (
-                    <TouchableOpacity 
-                      style={styles.buttonTag} 
+          <View style={{flexDirection: 'column', marginLeft: 10}}>
+            <View style={{flexDirection: 'row'}}>
+              {Array.isArray(location)
+                ? location.map(tag => (
+                    <TouchableOpacity
+                      style={styles.buttonTag}
                       key={tag}
-                      onPress={() => {setLocation(location => location.filter((item, index) => item !== tag));}}
-                    >
+                      onPress={() => {
+                        setLocation(location =>
+                          location.filter((item, index) => item !== tag),
+                        );
+                      }}>
                       <Text style={{}}>{tag}</Text>
                     </TouchableOpacity>
                   ))
                 : null}
+            </View>
+          </View>
+
+          <View style={{flexDirection: 'column', marginLeft: 10}}>
+            <TextInput
+              style={styles.input}
+              onChangeText={onChangeInputText}
+              onSubmitEditing={() => {
+                if (location.length < 3)
+                  setLocation(prevArray => [...prevArray, inputText]);
+                onChangeInputText('');
+                userAccountState.country = inputText;
+              }}
+              value={inputText}
+              placeholder="Press enter to add"
+            />
+          </View>
+
+          <View style={{flexDirection: 'row', marginLeft: 10, marginTop: 10}}>
+            <Text>Taste preference * </Text>
+          </View>
+
+          <View style={{flexDirection: 'column', margin: 10}}>
+            {options.map((option, index) => (
+              <View key={index} style={styles.flavor}>
+                <TouchableOpacity
+                  style={styles.checkbox}
+                  onPress={() => pickFlavor(option)}>
+                  {flavors.includes(option) && (
+                    <Text style={styles.check}>𐄂</Text>
+                  )}
+                </TouchableOpacity>
+                <Text>{option}</Text>
+              </View>
+            ))}
+          </View>
+
+          <TouchableOpacity
+            onPress={() => {
+              userAccountState.tastePref = flavors;
+              const {username, password, country, tastePref} = userAccountState;
+              Promise.all([
+                createUser(username, password, country, tastePref),
+              ]).then(responses => {
+                setUserId(responses[0]);
+              });
+
+              setBackground(!background);
+            }}
+            style={[
+              styles.signIn,
+              {
+                borderColor: 'green',
+                borderWidth: 1,
+              },
+            ]}>
+            <Text
+              style={[
+                styles.textSign,
+                {
+                  color: 'green',
+                },
+              ]}>
+              Submit
+            </Text>
+          </TouchableOpacity>
+        </View>
+      ) : null}
+
+      {filter ? (
+        <View style={styles.formContainer}>
+          <View style={styles.textContent}>
+            <View style={{flexDirection: 'row', marginBottom: 10}}>
+              <Text>Search certain reviews you like.</Text>
+            </View>
+
+            <Text style={{fontWeight: 'bold', fontSize: 12, paddingBottom: 12}}>
+              Location preference Filter
+            </Text>
+
+            <View style={{flexDirection: 'column', marginLeft: 0}}>
+              <View style={{flexDirection: 'row'}}>
+                {Array.isArray(location)
+                  ? location.map(tag => (
+                      <TouchableOpacity
+                        style={styles.buttonTag}
+                        key={tag}
+                        onPress={() => {
+                          setLocation(location =>
+                            location.filter((item, index) => item !== tag),
+                          );
+                        }}>
+                        <Text style={{}}>{tag}</Text>
+                      </TouchableOpacity>
+                    ))
+                  : null}
               </View>
             </View>
 
             <View style={{flexDirection: 'column', marginLeft: 0}}>
-                <TextInput
-                  style={styles.input}
-                  onChangeText={onChangeInputText}
-                  onSubmitEditing={() => {
-                    if (location.length < 3) 
-                      setLocation(prevArray => [... prevArray, inputText]);
-                    onChangeInputText("");
-                    setSearchCountry(inputText);
-                  }}
-                  value={inputText}
-                  placeholder="Press enter to add"
-                />
+              <TextInput
+                style={styles.input}
+                onChangeText={onChangeInputText}
+                onSubmitEditing={() => {
+                  if (location.length < 3)
+                    setLocation(prevArray => [...prevArray, inputText]);
+                  onChangeInputText('');
+                  setSearchCountry(inputText);
+                }}
+                value={inputText}
+                placeholder="Press enter to add"
+              />
             </View>
 
             <Text style={{fontWeight: 'bold', fontSize: 12}}>Taste Filter</Text>
@@ -455,17 +510,18 @@ const HomeScreen = ({route, navigation}) => {
       ) : null}
 
       {detail ? (
-        <View style={[styles.container, {justifyContent: 'flex-start',}]}>
-          
-          <View style={[styles.detailContainer, {flex: 1,}]}>
+        <View style={[styles.container, {justifyContent: 'flex-start'}]}>
+          <View style={[styles.detailContainer, {flex: 1}]}>
             <TouchableOpacity onPress={() => setDetail(!detail)}>
-              <Text style={[styles.textSign, {color: 'green',}]}>
-                X
-              </Text>
+              <Text style={[styles.textSign, {color: 'green'}]}>X</Text>
             </TouchableOpacity>
           </View>
-          
-          <View style={[styles.detailContainer, {flex: 10, justifyContent: 'center', alignItems: 'center',}]}>
+
+          <View
+            style={[
+              styles.detailContainer,
+              {flex: 10, justifyContent: 'center', alignItems: 'center'},
+            ]}>
             <Image
               source={{uri: mapState.places[cardID].photoUrl}}
               style={styles.detailImage}
@@ -473,30 +529,37 @@ const HomeScreen = ({route, navigation}) => {
             />
           </View>
 
-          <View style={[styles.detailContainer, {flex: 8,}]}>
-            
-            <Text style={{fontSize: 20, paddingBottom: 10,}}>
+          <View style={[styles.detailContainer, {flex: 8}]}>
+            <Text style={{fontSize: 20, paddingBottom: 10}}>
               {mapState.places[cardID].name}
             </Text>
 
             <View style={styles.detailItemContainer}>
               <Text style={styles.textDetailTitle}>Rating: </Text>
-              <Text style={styles.textDetail}>{mapState.places[cardID].rating}</Text>
+              <Text style={styles.textDetail}>
+                {mapState.places[cardID].rating}
+              </Text>
             </View>
 
             <View style={styles.detailItemContainer}>
               <Text style={styles.textDetailTitle}>Location rating: </Text>
-              <Text style={styles.textDetail}>{mapState.places[cardID].locationRating}</Text>
+              <Text style={styles.textDetail}>
+                {mapState.places[cardID].locationRating}
+              </Text>
             </View>
 
             <View style={styles.detailItemContainer}>
               <Text style={styles.textDetailTitle}>Taste: </Text>
-              <Text style={styles.textDetail}>{mapState.places[cardID].tastePrefString}</Text>
+              <Text style={styles.textDetail}>
+                {mapState.places[cardID].tastePrefString}
+              </Text>
             </View>
 
             <View style={styles.detailItemContainer}>
               <Text style={styles.textDetailTitle}>Address: </Text>
-              <Text style={styles.textDetail}>{mapState.places[cardID].vicinity}</Text>
+              <Text style={styles.textDetail}>
+                {mapState.places[cardID].vicinity}
+              </Text>
             </View>
 
             <View style={styles.detailItemContainer}>
@@ -511,17 +574,26 @@ const HomeScreen = ({route, navigation}) => {
 
             <View style={styles.detailItemContainer}>
               <Text style={styles.textDetailTitle}>Phone: </Text>
-              <OpenURLButton 
+              <OpenURLButton
                 textStyle={styles.urlButtonText}
-                url={`${Platform.OS === 'ios' ? 'telprompt:' : 'tel:'}${mapState.places[cardID].phone}`}
-              >
+                url={`${Platform.OS === 'ios' ? 'telprompt:' : 'tel:'}${
+                  mapState.places[cardID].phone
+                }`}>
                 {`${mapState.places[cardID].phone}`}
               </OpenURLButton>
             </View>
-
           </View>
 
-          <View style={[styles.detailContainer, {flex: 4, alignItems: 'flex-start', justifyContent: 'space-around', flexDirection: 'row',}]}>
+          <View
+            style={[
+              styles.detailContainer,
+              {
+                flex: 4,
+                alignItems: 'flex-start',
+                justifyContent: 'space-around',
+                flexDirection: 'row',
+              },
+            ]}>
             <TouchableOpacity
               onPress={() => {
                 navigation.navigate('Review', {
@@ -529,11 +601,8 @@ const HomeScreen = ({route, navigation}) => {
                   googlePlaceId: mapState.places[cardID].id,
                 });
               }}
-              style={styles.borderButton}
-            >
-              <Text style={styles.borderButtonText}>
-                Write a Review
-              </Text>
+              style={styles.borderButton}>
+              <Text style={styles.borderButtonText}>Write a Review</Text>
             </TouchableOpacity>
 
             <TouchableOpacity
@@ -543,22 +612,28 @@ const HomeScreen = ({route, navigation}) => {
                   destination: mapState.places[cardID].latlng,
                 });
               }}
-              style={styles.borderButton}
-            >
-              <Text style={styles.borderButtonText}>
-                Navigation
-              </Text>
+              style={styles.borderButton}>
+              <Text style={styles.borderButtonText}>Navigation</Text>
             </TouchableOpacity>
 
             <OpenURLButton
-              style={styles.borderButton} 
+              style={styles.borderButton}
               textStyle={styles.borderButtonText}
-              url={`${Platform.OS === 'ios' ? 'maps:0,0?q='+mapState.places[cardID].name+'@'+mapState.places[cardID].latlng : 'geo:0,0?q='+mapState.places[cardID].latlng+'('+mapState.places[cardID].name+')'}`}
-            >
+              url={`${
+                Platform.OS === 'ios'
+                  ? 'maps:0,0?q=' +
+                    mapState.places[cardID].name +
+                    '@' +
+                    mapState.places[cardID].latlng
+                  : 'geo:0,0?q=' +
+                    mapState.places[cardID].latlng +
+                    '(' +
+                    mapState.places[cardID].name +
+                    ')'
+              }`}>
               {`Open Maps`}
             </OpenURLButton>
           </View>
-
         </View>
       ) : null}
 
@@ -736,14 +811,14 @@ const styles = StyleSheet.create({
     // alignSelf: 'center',
   },
   input: {
-    width: width*0.8,
+    width: width * 0.8,
     height: 40,
     marginVertical: 10,
     borderWidth: 1,
     padding: 10,
   },
   buttonTag: {
-    backgroundColor: "powderblue",
+    backgroundColor: 'powderblue',
     padding: 4,
     borderRadius: 10,
     marginRight: 5,

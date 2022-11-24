@@ -1,16 +1,33 @@
 import React, {useState} from 'react';
-import {View, StyleSheet, Text, TouchableOpacity, TextInput, Dimensions,} from 'react-native';
+import {
+  View,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  TextInput,
+  Dimensions,
+} from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {createRating} from '../api/APIUtils';
 
 const {width, height} = Dimensions.get('window');
 
-const ReviewPage = ({route, navigation: { goBack }}) => {
+const ReviewPage = ({route, navigation: {goBack}}) => {
   const {userId, googlePlaceId} = route.params;
   const [flavors, setFlavors] = useState([]);
-  const [inputText, onChangeInputText] = useState("");
+  const [inputText, onChangeInputText] = useState('');
+  const [ratings, setRatings] = useState([1, 2, 3, 4, 5]);
+  const [userRating, setUserRating] = useState(0);
 
   const options = ['Salty', 'Spicy', 'Sweet', 'Greasy', 'Sour'];
+
+  function updateUserRating(r) {
+    if (userRating == 1 && r == 1) {
+      setUserRating(0);
+      return;
+    }
+    setUserRating(r);
+  }
 
   function pickFlavor(selectedFlavor) {
     if (flavors.includes(selectedFlavor)) {
@@ -28,11 +45,15 @@ const ReviewPage = ({route, navigation: { goBack }}) => {
         </Text>
 
         <View style={styles.ratings}>
-          <Ionicons name="ios-star-outline" style={styles.star} size={30} />
-          <Ionicons name="ios-star-outline" style={styles.star} size={30} />
-          <Ionicons name="ios-star-outline" style={styles.star} size={30} />
-          <Ionicons name="ios-star-outline" style={styles.star} size={30} />
-          <Ionicons name="ios-star-outline" style={styles.star} size={30} />
+          {ratings.map((r, i) => (
+            <TouchableOpacity key={i} onPress={() => updateUserRating(r)}>
+              {r <= userRating ? (
+                <Ionicons name="star" style={styles.star} size={30} />
+              ) : (
+                <Ionicons name="star-outline" style={styles.star} size={30} />
+              )}
+            </TouchableOpacity>
+          ))}
         </View>
 
         <View style={styles.formButton}>
@@ -68,19 +89,17 @@ const ReviewPage = ({route, navigation: { goBack }}) => {
         <View style={styles.formButton}>
           <TouchableOpacity
             style={styles.filterButton}
-            onPress={() => goBack()}
-            >
+            onPress={() => goBack()}>
             <Text style={styles.textFilter}>Cancel</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.filterButton}
             onPress={() => {
               // TODO(JIM): get rating value (change the 4 value)
-              createRating(userId, googlePlaceId, 3);
+              createRating(userId, googlePlaceId, userRating);
               console.log(inputText);
               goBack();
-            }}
-          >
+            }}>
             <Text style={styles.textFilter}>Submit</Text>
           </TouchableOpacity>
         </View>
@@ -150,7 +169,7 @@ const styles = StyleSheet.create({
     marginRight: 5,
   },
   input: {
-    width: width*0.75*0.8,
+    width: width * 0.75 * 0.8,
     height: 80,
     marginVertical: 10,
     borderWidth: 1,
