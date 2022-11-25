@@ -1,6 +1,28 @@
 import Geolocation from '@react-native-community/geolocation';
 import {getRatingsByPref} from '../api/APIUtils';
 import Config from 'react-native-config';
+import {PermissionsAndroid} from 'react-native';
+
+export async function requestLocationPermission() {
+  try {
+    const granted = await PermissionsAndroid.request(
+      PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+      {
+        title: 'Example App',
+        message: 'Example App access to your location ',
+      },
+    );
+    if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+      alert('You can use the location');
+    } else {
+      console.log(granted);
+      console.log('location permission denied');
+      alert('Location permission denied');
+    }
+  } catch (err) {
+    console.warn(err);
+  }
+}
 
 export function getCurrentLocation() {
   return new Promise((resolve, reject) =>
@@ -13,10 +35,12 @@ function getPlacesUrl(keyword, lat, long, radius, type, apiKey) {
   const location = `location=${lat},${long}&radius=${radius}`;
   const typeData = `&keyword=${keyword}&types=${type}`;
   const api = `&key=${apiKey}`;
+  console.log(`${baseUrl}${location}${typeData}${api}`);
   return `${baseUrl}${location}${typeData}${api}`;
 }
 
 export async function getPlaces(filterSkip, keyword, searchCountry, flavors) {
+  await requestLocationPermission();
   const apiKey = Config.REACT_APP_API_KEY;
   console.log('Key in MapAPI: ', apiKey);
   let position = await getCurrentLocation(),

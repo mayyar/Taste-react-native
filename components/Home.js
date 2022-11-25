@@ -16,9 +16,7 @@ import {createUser} from '../api/APIUtils';
 import StarRating from './StarRating';
 import ReviewPage from './ReviewPage';
 import OpenURLButton from './OpenURLButton';
-import {Platform, PermissionsAndroid} from 'react-native';
-
-import Geolocation from 'react-native-geolocation-service';
+import {Platform} from 'react-native';
 
 const {width, height} = Dimensions.get('window');
 const CARD_HEIGHT = 290;
@@ -53,24 +51,6 @@ const HomeScreen = ({route, navigation}) => {
   const [reviewPage, setReviewPage] = useState(false);
   const [inputText, onChangeInputText] = useState('');
   const [location, setLocation] = useState([]);
-
-  // useEffect(() => {
-  //   async function requestPermissions() {
-  //     if (Platform.OS === 'ios') {
-  //       Geolocation.requestAuthorization();
-  //       Geolocation.setRNConfiguration({
-  //         skipPermissionRequests: false,
-  //         authorizationLevel: 'whenInUse',
-  //       });
-  //     }
-
-  //     if (Platform.OS === 'android') {
-  //       await PermissionsAndroid.request(
-  //         PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-  //       );
-  //     }
-  //   }
-  // });
 
   function getFilterResults(filterSkip, keyword) {
     Promise.all([getPlaces(filterSkip, keyword, searchCountry, flavors)]).then(

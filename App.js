@@ -7,11 +7,14 @@
  */
 
 import React from 'react';
-import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import {NavigationContainer} from '@react-navigation/native';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import NavigationScreen from './components/Navigation';
 import ReviewPage from './components/ReviewPage';
 import HomeScreen from './components/Home';
+import {enableLatestRenderer} from 'react-native-maps';
+
+enableLatestRenderer();
 
 const Stack = createNativeStackNavigator();
 
