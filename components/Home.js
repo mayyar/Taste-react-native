@@ -51,6 +51,8 @@ const HomeScreen = ({route, navigation}) => {
   const [register, setRegister] = useState(true);
   const [background, setBackground] = useState(false);
   const [reviewPage, setReviewPage] = useState(false);
+  const [confirmPassword, onChangeConfirmPassword] = useState('');
+  const [registerError, onChangeRegisterError] = useState('');
   const [inputText, onChangeInputText] = useState('');
   const [location, setLocation] = useState([]);
 
@@ -125,17 +127,8 @@ const HomeScreen = ({route, navigation}) => {
       </View>
 
       {register ? (
-        <View
-          style={[
-            styles.container,
-            {
-              backgroundColor: 'white',
-              flex: 19,
-              justifyContent: 'flex-start',
-              alignItems: 'flex-start',
-              padding: 10,
-            },
-          ]}>
+        <View style={styles.containerWithBackground}>
+
           <View style={{flexDirection: 'row', margin: 10}}>
             <Text style={{fontWeight: 'bold', fontSize: 15}}>Register</Text>
           </View>
@@ -144,93 +137,75 @@ const HomeScreen = ({route, navigation}) => {
             <Text>* Required</Text>
           </View>
 
-          <View style={{flexDirection: 'row', margin: 10}}>
-            <Text>Username * </Text>
+          <View style={styles.inputView}>
             <TextInput
-              placeholder=""
-              placeholderTextColor="#000"
+              style={styles.input}
+              placeholder="Username*"
+              // placeholderTextColor="#000"
               autoCapitalize="none"
               onChangeText={newText => (userAccountState.username = newText)}
-              style={{
-                flex: 1,
-                padding: 0,
-                marginLeft: 5,
-                borderBottomColor: '#000',
-                borderBottomWidth: 1,
-              }}
             />
           </View>
 
-          <View style={{flexDirection: 'row', margin: 10}}>
-            <Text>Passward * </Text>
+          <View style={styles.inputView}>
             <TextInput
-              placeholder=""
-              placeholderTextColor="#000"
+              style={styles.input}
+              placeholder="Password*"
+              // placeholderTextColor="#000"
               autoCapitalize="none"
+              autoCorrect={false}
               onChangeText={newText => (userAccountState.password = newText)}
-              style={{
-                flex: 1,
-                padding: 0,
-                marginLeft: 5,
-                borderBottomColor: '#000',
-                borderBottomWidth: 1,
-              }}
+              secureTextEntry={true}
             />
           </View>
 
-          <View style={{flexDirection: 'row', margin: 10}}>
-            <Text>Re-enter Passward * </Text>
+          <View style={styles.inputView}>
             <TextInput
-              placeholder=""
-              placeholderTextColor="#000"
+              style={styles.input}
+              placeholder="Confirm Password*"
+              // placeholderTextColor="#000"
               autoCapitalize="none"
-              style={{
-                flex: 1,
-                padding: 0,
-                marginLeft: 5,
-                borderBottomColor: '#000',
-                borderBottomWidth: 1,
-              }}
+              autoCorrect={false}
+              secureTextEntry={true}
+              onChangeText={onChangeConfirmPassword}
+              value={confirmPassword}
             />
           </View>
 
-          <TouchableOpacity
-            onPress={() => {
-              setRegister(!register);
-              setBackground(!background);
-            }}
-            style={[
-              styles.signIn,
-              {
-                borderColor: 'green',
-                borderWidth: 1,
-              },
-            ]}>
-            <Text
-              style={[
-                styles.textSign,
-                {
-                  color: 'green',
-                },
-              ]}>
-              Sign Up
+          <View style={styles.inputView}>
+            <TouchableOpacity
+              style={[styles.borderButton, {flex: 1, marginVertical: 10, padding: 10, borderRadius: 20}]}
+              onPress={() => {
+                if (confirmPassword === userAccountState.password
+                    && userAccountState.username.length != 0
+                    && userAccountState.password.length != 0) {
+                  setRegister(!register);
+                  setBackground(!background);
+                  onChangeConfirmPassword('');
+                  onChangeRegisterError('');
+                }
+                else {
+                  onChangeRegisterError('Invalid username or password!');
+                }
+              }}
+            >
+              <Text style={styles.borderButtonText}>
+                Sign Up
+              </Text>
+            </TouchableOpacity>
+          </View>
+
+          <View style={[styles.inputView, {justifyContent: 'center',}]}>
+            <Text style={{color: 'red',}}>
+              {`${registerError}`}
             </Text>
-          </TouchableOpacity>
+          </View>
         </View>
       ) : null}
 
       {background ? (
-        <View
-          style={[
-            styles.container,
-            {
-              backgroundColor: 'white',
-              flex: 19,
-              justifyContent: 'flex-start',
-              alignItems: 'flex-start',
-              padding: 10,
-            },
-          ]}>
+        <View style={styles.containerWithBackground}>
+
           <View style={{flexDirection: 'row', margin: 10}}>
             <Text style={{fontWeight: 'bold', fontSize: 15}}>Background</Text>
           </View>
@@ -271,7 +246,7 @@ const HomeScreen = ({route, navigation}) => {
             </View>
           </View>
 
-          <View style={{flexDirection: 'column', marginLeft: 10}}>
+          <View style={styles.inputView}>
             <TextInput
               style={styles.input}
               onChangeText={onChangeInputText}
@@ -305,35 +280,26 @@ const HomeScreen = ({route, navigation}) => {
             ))}
           </View>
 
-          <TouchableOpacity
-            onPress={() => {
-              userAccountState.tastePref = flavors;
-              const {username, password, country, tastePref} = userAccountState;
-              Promise.all([
-                createUser(username, password, country, tastePref),
-              ]).then(responses => {
-                setUserId(responses[0]);
-              });
+          <View style={styles.inputView}>
+            <TouchableOpacity
+              style={[styles.borderButton, {flex: 1, marginVertical: 10, padding: 10, borderRadius: 20}]}
+              onPress={() => {
+                userAccountState.tastePref = flavors;
+                const {username, password, country, tastePref} = userAccountState;
+                Promise.all([
+                  createUser(username, password, country, tastePref),
+                ]).then(responses => {
+                  setUserId(responses[0]);
+                });
 
-              setBackground(!background);
-            }}
-            style={[
-              styles.signIn,
-              {
-                borderColor: 'green',
-                borderWidth: 1,
-              },
-            ]}>
-            <Text
-              style={[
-                styles.textSign,
-                {
-                  color: 'green',
-                },
-              ]}>
-              Submit
-            </Text>
-          </TouchableOpacity>
+                setBackground(!background);
+              }}
+            >
+              <Text style={styles.borderButtonText}>
+                Submit
+              </Text>
+            </TouchableOpacity>
+          </View>
         </View>
       ) : null}
 
@@ -648,6 +614,11 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
+  containerWithBackground: {
+    flex: 1,
+    backgroundColor: 'white', 
+    padding: 10,
+  },
   searchBox: {
     position: 'absolute',
     marginTop: Platform.OS === 'ios' ? 20 : 20,
@@ -810,12 +781,17 @@ const styles = StyleSheet.create({
     // resizeMode: 'contain',
     // alignSelf: 'center',
   },
+  inputView: {
+    flexDirection: 'row', 
+    marginHorizontal: 10,
+  },
   input: {
-    width: width * 0.8,
+    flex: 1,
     height: 40,
     marginVertical: 10,
     borderWidth: 1,
     padding: 10,
+    borderRadius: 20,
   },
   buttonTag: {
     backgroundColor: 'powderblue',
