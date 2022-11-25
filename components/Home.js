@@ -223,8 +223,9 @@ const HomeScreen = ({route, navigation}) => {
             </Text>
           </View>
 
-          <View style={{flexDirection: 'row', marginLeft: 10}}>
-            <Text>Location *{'\n'}</Text>
+          <View style={{flexDirection: 'column', marginLeft: 10}}>
+            <Text>Locations *</Text>
+            <Text style={{color: '#808080', fontSize: 12,}}>Your preferred locations' flavor{'\n'}</Text>
           </View>
 
           <View style={{flexDirection: 'column', marginLeft: 10}}>
@@ -261,8 +262,9 @@ const HomeScreen = ({route, navigation}) => {
             />
           </View>
 
-          <View style={{flexDirection: 'row', marginLeft: 10, marginTop: 10}}>
-            <Text>Taste preference * </Text>
+          <View style={{flexDirection: 'column', marginLeft: 10, marginTop: 10}}>
+            <Text>Taste preferences * </Text>
+            <Text style={{color: '#808080', fontSize: 12,}}>Your preferred taste flavor</Text>
           </View>
 
           <View style={{flexDirection: 'column', margin: 10}}>
@@ -307,11 +309,11 @@ const HomeScreen = ({route, navigation}) => {
         <View style={styles.formContainer}>
           <View style={styles.textContent}>
             <View style={{flexDirection: 'row', marginBottom: 10}}>
-              <Text>Search certain reviews you like.</Text>
+              <Text style={{fontSize: 12,}}>Search restaurants & get ratings you like.</Text>
             </View>
 
             <Text style={{fontWeight: 'bold', fontSize: 12, paddingBottom: 12}}>
-              Location preference Filter
+              Preferred Locations' Flavor
             </Text>
 
             <View style={{flexDirection: 'column', marginLeft: 0}}>
@@ -319,14 +321,14 @@ const HomeScreen = ({route, navigation}) => {
                 {Array.isArray(location)
                   ? location.map(tag => (
                       <TouchableOpacity
-                        style={styles.buttonTag}
+                        style={[styles.buttonTag, {backgroundColor: 'coral',}]}
                         key={tag}
                         onPress={() => {
                           setLocation(location =>
                             location.filter((item, index) => item !== tag),
                           );
                         }}>
-                        <Text style={{}}>{tag}</Text>
+                        <Text style={{color: 'white', fontWeight: 'bold',}}>{tag}</Text>
                       </TouchableOpacity>
                     ))
                   : null}
@@ -348,13 +350,13 @@ const HomeScreen = ({route, navigation}) => {
               />
             </View>
 
-            <Text style={{fontWeight: 'bold', fontSize: 12}}>Taste Filter</Text>
+            <Text style={{fontWeight: 'bold', fontSize: 12}}>Preferred Taste Flavor</Text>
 
             <View>
               {options.map((option, index) => (
                 <View key={index} style={styles.flavor}>
                   <TouchableOpacity
-                    style={styles.checkbox}
+                    style={[styles.checkbox, {borderColor: 'coral',}]}
                     onPress={() => pickFlavor(option)}>
                     {flavors.includes(option) && (
                       <Text style={styles.check}>𐄂</Text>
@@ -367,7 +369,7 @@ const HomeScreen = ({route, navigation}) => {
 
             <View style={styles.formButton}>
               <TouchableOpacity
-                style={styles.filterButton}
+                style={[styles.filterButton, {backgroundColor: 'coral',}]}
                 onPress={() => {
                   getFilterResults(true, searchRestaurant);
                   setFilter(!filter);
@@ -376,7 +378,7 @@ const HomeScreen = ({route, navigation}) => {
                 <Text style={styles.textFilter}>Skip</Text>
               </TouchableOpacity>
               <TouchableOpacity
-                style={styles.filterButton}
+                style={[styles.filterButton, {backgroundColor: 'coral',}]}
                 onPress={() => {
                   getFilterResults(false, searchRestaurant);
                   setFilter(!filter);
