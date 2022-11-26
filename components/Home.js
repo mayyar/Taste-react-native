@@ -55,6 +55,7 @@ const HomeScreen = ({route, navigation}) => {
   const [registerError, onChangeRegisterError] = useState('');
   const [inputText, onChangeInputText] = useState('');
   const [location, setLocation] = useState([]);
+  const phone = 4048942000;
 
   // useEffect(() => {
   //   async function requestPermissions() {
@@ -118,10 +119,12 @@ const HomeScreen = ({route, navigation}) => {
           onChangeText={newText => setSearchRestaurant(newText)}
           style={{flex: 1, padding: 0}}
           onSubmitEditing={() => {
-            getFilterResults(searchRestaurant);
+            getFilterResults(false, searchRestaurant);
+            setFilter(false);
+            setSubmit(true);
           }}
         />
-        <TouchableOpacity onPress={() => setFilter(!filter)}>
+        <TouchableOpacity onPress={() => {setFilter(!filter); setSubmit(false);}}>
           <Ionicons name="search" size={20} />
         </TouchableOpacity>
       </View>
@@ -372,8 +375,8 @@ const HomeScreen = ({route, navigation}) => {
                 style={[styles.filterButton, {backgroundColor: 'coral',}]}
                 onPress={() => {
                   getFilterResults(true, searchRestaurant);
-                  setFilter(!filter);
-                  setSubmit(!submit);
+                  setFilter(false);
+                  setSubmit(true);
                 }}>
                 <Text style={styles.textFilter}>Skip</Text>
               </TouchableOpacity>
@@ -381,8 +384,8 @@ const HomeScreen = ({route, navigation}) => {
                 style={[styles.filterButton, {backgroundColor: 'coral',}]}
                 onPress={() => {
                   getFilterResults(false, searchRestaurant);
-                  setFilter(!filter);
-                  setSubmit(!submit);
+                  setFilter(false);
+                  setSubmit(true);
                 }}>
                 <Text style={styles.textFilter}>Submit</Text>
               </TouchableOpacity>
@@ -544,10 +547,8 @@ const HomeScreen = ({route, navigation}) => {
               <Text style={styles.textDetailTitle}>Phone: </Text>
               <OpenURLButton
                 textStyle={styles.urlButtonText}
-                url={`${Platform.OS === 'ios' ? 'telprompt:' : 'tel:'}${
-                  mapState.places[cardID].phone
-                }`}>
-                {`${mapState.places[cardID].phone}`}
+                url={`${Platform.OS === 'ios' ? 'telprompt:' : 'tel:'}${phone}`}>
+                {`${phone}`}
               </OpenURLButton>
             </View>
           </View>
