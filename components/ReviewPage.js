@@ -6,6 +6,8 @@ import {
   TouchableOpacity,
   TextInput,
   Dimensions,
+  TouchableWithoutFeedback,
+  Keyboard,
 } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {createRating} from '../api/APIUtils';
@@ -38,6 +40,7 @@ const ReviewPage = ({route, navigation: {goBack}}) => {
   }
 
   return (
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
     <View style={styles.container}>
       <View style={styles.textContent}>
         <Text style={{fontWeight: 'bold', fontSize: 20, marginBottom: 0}}>
@@ -105,6 +108,7 @@ const ReviewPage = ({route, navigation: {goBack}}) => {
         </View>
       </View>
     </View>
+    </TouchableWithoutFeedback>
   );
 };
 
