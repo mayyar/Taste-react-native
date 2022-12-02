@@ -8,6 +8,8 @@ import {
   Dimensions,
   Image,
   TouchableOpacity,
+  TouchableWithoutFeedback,
+  Keyboard,
 } from 'react-native';
 import MapView, {Marker, PROVIDER_GOOGLE} from 'react-native-maps';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -93,6 +95,7 @@ const HomeScreen = ({route, navigation}) => {
 
   return (
     <View style={styles.container}>
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
       <MapView
         provider={PROVIDER_GOOGLE} // remove if not using Google Maps
         style={styles.map}
@@ -111,6 +114,8 @@ const HomeScreen = ({route, navigation}) => {
           />
         ))}
       </MapView>
+      </TouchableWithoutFeedback>
+
       <View style={styles.searchBox}>
         <TextInput
           placeholder="Search here"
@@ -124,12 +129,13 @@ const HomeScreen = ({route, navigation}) => {
             setSubmit(true);
           }}
         />
-        <TouchableOpacity onPress={() => {setFilter(!filter); setSubmit(false);}}>
+        <TouchableOpacity onPress={() => {setFilter(!filter); setSubmit(false); Keyboard.dismiss();}}>
           <Ionicons name="search" size={20} />
         </TouchableOpacity>
       </View>
 
       {register ? (
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
         <View style={styles.containerWithBackground}>
 
           <View style={{flexDirection: 'row', margin: 10}}>
@@ -204,9 +210,11 @@ const HomeScreen = ({route, navigation}) => {
             </Text>
           </View>
         </View>
+        </TouchableWithoutFeedback>
       ) : null}
 
       {background ? (
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
         <View style={styles.containerWithBackground}>
 
           <View style={{flexDirection: 'row', margin: 10}}>
@@ -306,9 +314,11 @@ const HomeScreen = ({route, navigation}) => {
             </TouchableOpacity>
           </View>
         </View>
+        </TouchableWithoutFeedback>
       ) : null}
 
       {filter ? (
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
         <View style={styles.formContainer}>
           <View style={styles.textContent}>
             <View style={{flexDirection: 'row', marginBottom: 10}}>
@@ -392,6 +402,7 @@ const HomeScreen = ({route, navigation}) => {
             </View>
           </View>
         </View>
+        </TouchableWithoutFeedback>
       ) : null}
 
       {submit ? (
