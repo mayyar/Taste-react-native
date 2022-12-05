@@ -8,6 +8,8 @@ import {
   Dimensions,
   Image,
   TouchableOpacity,
+  TouchableWithoutFeedback,
+  Keyboard,
 } from 'react-native';
 import MapView, {Marker, PROVIDER_GOOGLE} from 'react-native-maps';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -49,8 +51,11 @@ const HomeScreen = ({route, navigation}) => {
   const [register, setRegister] = useState(true);
   const [background, setBackground] = useState(false);
   const [reviewPage, setReviewPage] = useState(false);
+  const [confirmPassword, onChangeConfirmPassword] = useState('');
+  const [registerError, onChangeRegisterError] = useState('');
   const [inputText, onChangeInputText] = useState('');
   const [location, setLocation] = useState([]);
+  const phone = 4048942000;
 
   function getFilterResults(filterSkip, keyword) {
     Promise.all([getPlaces(filterSkip, keyword, searchCountry, flavors)]).then(
@@ -70,6 +75,7 @@ const HomeScreen = ({route, navigation}) => {
 
   return (
     <View style={styles.container}>
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
       <MapView
         provider={PROVIDER_GOOGLE} // remove if not using Google Maps
         style={styles.map}
@@ -88,6 +94,8 @@ const HomeScreen = ({route, navigation}) => {
           />
         ))}
       </MapView>
+      </TouchableWithoutFeedback>
+
       <View style={styles.searchBox}>
         <TextInput
           placeholder="Search here"
@@ -96,26 +104,20 @@ const HomeScreen = ({route, navigation}) => {
           onChangeText={newText => setSearchRestaurant(newText)}
           style={{flex: 1, padding: 0}}
           onSubmitEditing={() => {
-            getFilterResults(searchRestaurant);
+            getFilterResults(false, searchRestaurant);
+            setFilter(false);
+            setSubmit(true);
           }}
         />
-        <TouchableOpacity onPress={() => setFilter(!filter)}>
+        <TouchableOpacity onPress={() => {setFilter(!filter); setSubmit(false); Keyboard.dismiss();}}>
           <Ionicons name="search" size={20} />
         </TouchableOpacity>
       </View>
 
       {register ? (
-        <View
-          style={[
-            styles.container,
-            {
-              backgroundColor: 'white',
-              flex: 19,
-              justifyContent: 'flex-start',
-              alignItems: 'flex-start',
-              padding: 10,
-            },
-          ]}>
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+        <View style={styles.containerWithBackground}>
+
           <View style={{flexDirection: 'row', margin: 10}}>
             <Text style={{fontWeight: 'bold', fontSize: 15}}>Register</Text>
           </View>
@@ -124,93 +126,77 @@ const HomeScreen = ({route, navigation}) => {
             <Text>* Required</Text>
           </View>
 
-          <View style={{flexDirection: 'row', margin: 10}}>
-            <Text>Username * </Text>
+          <View style={styles.inputView}>
             <TextInput
-              placeholder=""
-              placeholderTextColor="#000"
+              style={styles.input}
+              placeholder="Username*"
+              // placeholderTextColor="#000"
               autoCapitalize="none"
               onChangeText={newText => (userAccountState.username = newText)}
-              style={{
-                flex: 1,
-                padding: 0,
-                marginLeft: 5,
-                borderBottomColor: '#000',
-                borderBottomWidth: 1,
-              }}
             />
           </View>
 
-          <View style={{flexDirection: 'row', margin: 10}}>
-            <Text>Passward * </Text>
+          <View style={styles.inputView}>
             <TextInput
-              placeholder=""
-              placeholderTextColor="#000"
+              style={styles.input}
+              placeholder="Password*"
+              // placeholderTextColor="#000"
               autoCapitalize="none"
+              autoCorrect={false}
               onChangeText={newText => (userAccountState.password = newText)}
-              style={{
-                flex: 1,
-                padding: 0,
-                marginLeft: 5,
-                borderBottomColor: '#000',
-                borderBottomWidth: 1,
-              }}
+              secureTextEntry={true}
             />
           </View>
 
-          <View style={{flexDirection: 'row', margin: 10}}>
-            <Text>Re-enter Passward * </Text>
+          <View style={styles.inputView}>
             <TextInput
-              placeholder=""
-              placeholderTextColor="#000"
+              style={styles.input}
+              placeholder="Confirm Password*"
+              // placeholderTextColor="#000"
               autoCapitalize="none"
-              style={{
-                flex: 1,
-                padding: 0,
-                marginLeft: 5,
-                borderBottomColor: '#000',
-                borderBottomWidth: 1,
-              }}
+              autoCorrect={false}
+              secureTextEntry={true}
+              onChangeText={onChangeConfirmPassword}
+              value={confirmPassword}
             />
           </View>
 
-          <TouchableOpacity
-            onPress={() => {
-              setRegister(!register);
-              setBackground(!background);
-            }}
-            style={[
-              styles.signIn,
-              {
-                borderColor: 'green',
-                borderWidth: 1,
-              },
-            ]}>
-            <Text
-              style={[
-                styles.textSign,
-                {
-                  color: 'green',
-                },
-              ]}>
-              Sign Up
+          <View style={styles.inputView}>
+            <TouchableOpacity
+              style={[styles.borderButton, {flex: 1, marginVertical: 10, padding: 10, borderRadius: 20}]}
+              onPress={() => {
+                if (confirmPassword === userAccountState.password
+                    && userAccountState.username.length != 0
+                    && userAccountState.password.length != 0) {
+                  setRegister(!register);
+                  setBackground(!background);
+                  onChangeConfirmPassword('');
+                  onChangeRegisterError('');
+                }
+                else {
+                  onChangeRegisterError('Invalid username or password!');
+                }
+              }}
+            >
+              <Text style={styles.borderButtonText}>
+                Sign Up
+              </Text>
+            </TouchableOpacity>
+          </View>
+
+          <View style={[styles.inputView, {justifyContent: 'center',}]}>
+            <Text style={{color: 'red',}}>
+              {`${registerError}`}
             </Text>
-          </TouchableOpacity>
+          </View>
         </View>
+        </TouchableWithoutFeedback>
       ) : null}
 
       {background ? (
-        <View
-          style={[
-            styles.container,
-            {
-              backgroundColor: 'white',
-              flex: 19,
-              justifyContent: 'flex-start',
-              alignItems: 'flex-start',
-              padding: 10,
-            },
-          ]}>
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+        <View style={styles.containerWithBackground}>
+
           <View style={{flexDirection: 'row', margin: 10}}>
             <Text style={{fontWeight: 'bold', fontSize: 15}}>Background</Text>
           </View>
@@ -228,8 +214,9 @@ const HomeScreen = ({route, navigation}) => {
             </Text>
           </View>
 
-          <View style={{flexDirection: 'row', marginLeft: 10}}>
-            <Text>Location *{'\n'}</Text>
+          <View style={{flexDirection: 'column', marginLeft: 10}}>
+            <Text>Locations *</Text>
+            <Text style={{color: '#808080', fontSize: 12,}}>Your preferred locations' flavor{'\n'}</Text>
           </View>
 
           <View style={{flexDirection: 'column', marginLeft: 10}}>
@@ -251,7 +238,7 @@ const HomeScreen = ({route, navigation}) => {
             </View>
           </View>
 
-          <View style={{flexDirection: 'column', marginLeft: 10}}>
+          <View style={styles.inputView}>
             <TextInput
               style={styles.input}
               onChangeText={onChangeInputText}
@@ -266,8 +253,9 @@ const HomeScreen = ({route, navigation}) => {
             />
           </View>
 
-          <View style={{flexDirection: 'row', marginLeft: 10, marginTop: 10}}>
-            <Text>Taste preference * </Text>
+          <View style={{flexDirection: 'column', marginLeft: 10, marginTop: 10}}>
+            <Text>Taste preferences * </Text>
+            <Text style={{color: '#808080', fontSize: 12,}}>Your preferred taste flavor</Text>
           </View>
 
           <View style={{flexDirection: 'column', margin: 10}}>
@@ -285,47 +273,40 @@ const HomeScreen = ({route, navigation}) => {
             ))}
           </View>
 
-          <TouchableOpacity
-            onPress={() => {
-              userAccountState.tastePref = flavors;
-              const {username, password, country, tastePref} = userAccountState;
-              Promise.all([
-                createUser(username, password, country, tastePref),
-              ]).then(responses => {
-                setUserId(responses[0]);
-              });
+          <View style={styles.inputView}>
+            <TouchableOpacity
+              style={[styles.borderButton, {flex: 1, marginVertical: 10, padding: 10, borderRadius: 20}]}
+              onPress={() => {
+                userAccountState.tastePref = flavors;
+                const {username, password, country, tastePref} = userAccountState;
+                Promise.all([
+                  createUser(username, password, country, tastePref),
+                ]).then(responses => {
+                  setUserId(responses[0]);
+                });
 
-              setBackground(!background);
-            }}
-            style={[
-              styles.signIn,
-              {
-                borderColor: 'green',
-                borderWidth: 1,
-              },
-            ]}>
-            <Text
-              style={[
-                styles.textSign,
-                {
-                  color: 'green',
-                },
-              ]}>
-              Submit
-            </Text>
-          </TouchableOpacity>
+                setBackground(!background);
+              }}
+            >
+              <Text style={styles.borderButtonText}>
+                Submit
+              </Text>
+            </TouchableOpacity>
+          </View>
         </View>
+        </TouchableWithoutFeedback>
       ) : null}
 
       {filter ? (
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
         <View style={styles.formContainer}>
           <View style={styles.textContent}>
             <View style={{flexDirection: 'row', marginBottom: 10}}>
-              <Text>Search certain reviews you like.</Text>
+              <Text style={{fontSize: 12,}}>Search restaurants & get ratings you like.</Text>
             </View>
 
             <Text style={{fontWeight: 'bold', fontSize: 12, paddingBottom: 12}}>
-              Location preference Filter
+              Preferred Locations' Flavor
             </Text>
 
             <View style={{flexDirection: 'column', marginLeft: 0}}>
@@ -333,14 +314,14 @@ const HomeScreen = ({route, navigation}) => {
                 {Array.isArray(location)
                   ? location.map(tag => (
                       <TouchableOpacity
-                        style={styles.buttonTag}
+                        style={[styles.buttonTag, {backgroundColor: 'coral',}]}
                         key={tag}
                         onPress={() => {
                           setLocation(location =>
                             location.filter((item, index) => item !== tag),
                           );
                         }}>
-                        <Text style={{}}>{tag}</Text>
+                        <Text style={{color: 'white', fontWeight: 'bold',}}>{tag}</Text>
                       </TouchableOpacity>
                     ))
                   : null}
@@ -362,13 +343,13 @@ const HomeScreen = ({route, navigation}) => {
               />
             </View>
 
-            <Text style={{fontWeight: 'bold', fontSize: 12}}>Taste Filter</Text>
+            <Text style={{fontWeight: 'bold', fontSize: 12}}>Preferred Taste Flavor</Text>
 
             <View>
               {options.map((option, index) => (
                 <View key={index} style={styles.flavor}>
                   <TouchableOpacity
-                    style={styles.checkbox}
+                    style={[styles.checkbox, {borderColor: 'coral',}]}
                     onPress={() => pickFlavor(option)}>
                     {flavors.includes(option) && (
                       <Text style={styles.check}>𐄂</Text>
@@ -381,26 +362,27 @@ const HomeScreen = ({route, navigation}) => {
 
             <View style={styles.formButton}>
               <TouchableOpacity
-                style={styles.filterButton}
+                style={[styles.filterButton, {backgroundColor: 'coral',}]}
                 onPress={() => {
                   getFilterResults(true, searchRestaurant);
-                  setFilter(!filter);
-                  setSubmit(!submit);
+                  setFilter(false);
+                  setSubmit(true);
                 }}>
                 <Text style={styles.textFilter}>Skip</Text>
               </TouchableOpacity>
               <TouchableOpacity
-                style={styles.filterButton}
+                style={[styles.filterButton, {backgroundColor: 'coral',}]}
                 onPress={() => {
                   getFilterResults(false, searchRestaurant);
-                  setFilter(!filter);
-                  setSubmit(!submit);
+                  setFilter(false);
+                  setSubmit(true);
                 }}>
                 <Text style={styles.textFilter}>Submit</Text>
               </TouchableOpacity>
             </View>
           </View>
         </View>
+        </TouchableWithoutFeedback>
       ) : null}
 
       {submit ? (
@@ -556,10 +538,8 @@ const HomeScreen = ({route, navigation}) => {
               <Text style={styles.textDetailTitle}>Phone: </Text>
               <OpenURLButton
                 textStyle={styles.urlButtonText}
-                url={`${Platform.OS === 'ios' ? 'telprompt:' : 'tel:'}${
-                  mapState.places[cardID].phone
-                }`}>
-                {`${mapState.places[cardID].phone}`}
+                url={`${Platform.OS === 'ios' ? 'telprompt:' : 'tel:'}${phone}`}>
+                {`${phone}`}
               </OpenURLButton>
             </View>
           </View>
@@ -627,6 +607,11 @@ export default HomeScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  containerWithBackground: {
+    flex: 1,
+    backgroundColor: 'white', 
+    padding: 10,
   },
   searchBox: {
     position: 'absolute',
@@ -790,12 +775,17 @@ const styles = StyleSheet.create({
     // resizeMode: 'contain',
     // alignSelf: 'center',
   },
+  inputView: {
+    flexDirection: 'row', 
+    marginHorizontal: 10,
+  },
   input: {
-    width: width * 0.8,
+    flex: 1,
     height: 40,
     marginVertical: 10,
     borderWidth: 1,
     padding: 10,
+    borderRadius: 20,
   },
   buttonTag: {
     backgroundColor: 'powderblue',
